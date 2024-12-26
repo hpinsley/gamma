@@ -12,8 +12,10 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
 
   const generateInitialPrompt = () => {
     const prompt = `
-    You are a ${currentProfession} 
-    who wants to become a ${desiredProfession}.`;
+    I am currently a ${currentProfession}.  I want to become a ${desiredProfession}.
+    Which questions should I ask you to help me achieve my goal?
+    Please list the specific questions you'd like me to answer and respond in json.`;
+    
     setPrompt(prompt);
   };
 
