@@ -5,6 +5,10 @@ services:
       context: .
       dockerfile: Dockerfile
 
+    environment:
+      # Only REACT_APP_ prefixed env variables are passed to the app.  See https://create-react-app.dev/docs/adding-custom-environment-variables/
+      - REACT_APP_OPENAI_API_KEY=${OPENAPI_API_KEY_1}
+      
     ports:
       - 8000:8000
       - 8080:8080

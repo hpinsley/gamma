@@ -1,5 +1,9 @@
 import React from 'react';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
+
+interface PromptManProps {
+  name: string;
+}
 
 const PromptMan: React.FC<PromptManProps> = ({ name }) => {
   const [currentProfession, setCurrentProfession] = React.useState('Data Analyst');
@@ -7,32 +11,29 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
   const [prompt, setPrompt] = React.useState('');
   const [response, setResponse] = React.useState('');
 
-  const generateInitialPrompt = () => {
+  const generateInitialPrompt = async () => {
     const prompt = `
     I am currently a ${currentProfession}. I want to become a ${desiredProfession}.
     Which questions should I ask you to help me achieve my goal?
     Please list the specific questions you'd like me to answer and respond in json.`;
-    
+
     setPrompt(prompt);
-    getChatGPTResponse(prompt);
+    await getChatGPTResponse(prompt);
   };
 
   const getChatGPTResponse = async (prompt: string) => {
-    const configuration = new Configuration({
-      apiKey: process.env.OPENAI_API_KEY,
+    console.log(process.env);
+    const client = new OpenAI({
+      apiKey: process.env['REACT_APP_OPENAI_API_KEY'], // This is the default and can be omitted
+      dangerouslyAllowBrowser: true // We should move all interactions to a server
     });
-    const openai = new OpenAIApi(configuration);
 
-    try {
-      const completion = await openai.createCompletion({
-        model: 'text-davinci-003',
-        prompt: prompt,
-        max_tokens: 150,
-      });
-      setResponse(completion.data.choices[0].text);
-    } catch (error) {
-      console.error('Error fetching response from OpenAI:', error);
-    }
+    const response = await client.chat.completions.create({
+      messages: [{ role: 'user', content: 'Say this is a test' }],
+      model: 'gpt-4o',
+    });
+    console.log(response);
+    setResponse(JSON.stringify(response));
   };
 
   return (

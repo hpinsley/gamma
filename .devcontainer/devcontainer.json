@@ -4,14 +4,19 @@
 	"service": "devcontainer",
 	"workspaceFolder": "/workspace",
 	"forwardPorts": [
-		3000,8000,8080
+		3000,
+		8000,
+		8080
 	],
-	"postCreateCommand": "bash -c 'npm install -g create-react-app'",
+	// "containerEnv": {
+	// 	"REACT_APP_OPENAI_API_KEY ": "${localEnv:OPENAPI_API_KEY_1}"
+	// },
+	// "remoteEnv": {
+	// 	"OPENAI_API_KEY ": "${localEnv:OPENAPI_API_KEY_1}"
+	// },
 	"customizations": {
 		"vscode": {
-			"extensions": [
-				
-			]
+			"extensions": []
 		}
 	}
 }
