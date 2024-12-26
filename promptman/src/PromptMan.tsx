@@ -14,10 +14,11 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
   const generateInitialPrompt = async () => {
     const prompt = `
     I am currently a ${currentProfession}. I want to become a ${desiredProfession}.
-    Which questions should I ask you to help me achieve my goal?
-    Please list the specific questions you'd like me to answer and respond in json.`;
+    What information do you need from me to help you give me the helpful and detailed response to my question?
+    Please format your response as json`;
 
     setPrompt(prompt);
+    setResponse('Waiting...');
     await getChatGPTResponse(prompt);
   };
 
@@ -29,11 +30,12 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     });
 
     const response = await client.chat.completions.create({
-      messages: [{ role: 'user', content: 'Say this is a test' }],
+      messages: [{ role: 'user', content: prompt }],
       model: 'gpt-4o',
     });
     console.log(response);
-    setResponse(JSON.stringify(response));
+    const responseText = response.choices[0].message.content || "";
+    setResponse(responseText);
   };
 
   return (
