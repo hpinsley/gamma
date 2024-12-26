@@ -1,0 +1,17 @@
+{
+	"name": "Project Gamma",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "devcontainer",
+	"workspaceFolder": "/workspace",
+	"forwardPorts": [
+		3000,8000,8080
+	],
+	"postCreateCommand": "bash -c 'npm install --save-dev @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint typescript create-react-app'",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				
+			]
+		}
+	}
+}
