@@ -11,6 +11,7 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
   const [initialQuestion, setinitialQuestion] = React.useState('How can I become a full stack developer?');
   const [message, setMessage] = React.useState('');
   const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
+  const [secondSubmissionPrompt, setSecondSubmissionPrompt] = React.useState('PROMPT');
 
   const client = new OpenAI({
     apiKey: process.env['REACT_APP_OPENAI_API_KEY'], // This is the default and can be omitted
@@ -71,7 +72,7 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
 
     return (
       <div>
-        <h3>Current Answers:</h3>
+        <h3>{currentAnswerCount()} Current Answers</h3>
         <hr />
         <ul>
           {categoryQuestionsAndAnswers.map((category, index) => (
@@ -148,6 +149,29 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     setCategoryQuestionsAndAnswers(qa);
   };
 
+  const currentAnswerCount = () : number  => {
+    return categoryQuestionsAndAnswers.reduce((acc, category) => {
+      return acc + category.questionsAndAnswers.reduce((acc, qa) => {
+        return acc + (qa.answer === '' ? 0 : 1);
+      }, 0)
+    }, 0);
+  }
+
+  const generateSecondPrompt = () : void => {
+    const qa: CategoryQuestionsAndAnswers[] = categoryQuestionsAndAnswers;
+    const qaJson = JSON.stringify(qa);
+    const prompt = `I originally asked you ${initialQuestion}\n
+    You asked me some follow-up questions that you felt you needed to provide me with a detailed plan.
+    Here are questions you asked me and the answers I provided in json format:
+    \n
+    ${qaJson}
+    \n
+    Please construct a detailed plan to achieve this goal.
+    `;
+
+    setSecondSubmissionPrompt(prompt)
+  }
+
   return (
     <div>
 
@@ -169,7 +193,10 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
         <div id='answers'>
           {displayCurrentAnswers()}
           <div>
-            <button>Submit Answers</button>
+            {currentAnswerCount() > 0 && (<button id="submit-answers" onClick={generateSecondPrompt}>Submit Answers</button>)}
+          </div>
+          <div>
+            {secondSubmissionPrompt}
           </div>
         </div>
       </div>

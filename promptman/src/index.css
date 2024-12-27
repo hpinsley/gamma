@@ -30,7 +30,7 @@ code {
     monospace;
 }
 
-button#ask {
+button#ask, button#submit-answers {
   font-size: 20pt;
   margin-left: 10pt;
   border-radius: 15px;
@@ -43,7 +43,7 @@ button#ask {
   transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
 
-button#ask:hover {
+button#ask:hover, button#submit-answers:hover {
   background-color: #45a049; /* Darker green on hover */
 }
 
@@ -72,6 +72,18 @@ div#questions-answers {
   border: 3px inset beige;
   margin: 10px;
   padding: 5px;
+}
+
+div#questions {
+  max-height: 80vh; /* Set a fixed height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px; /* Optional: Add padding for better spacing */
+}
+
+div#answers {
+  max-height: 80vh; /* Set a fixed height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px; /* Optional: Add padding for better spacing */
 }
 
 div#questions ul {
