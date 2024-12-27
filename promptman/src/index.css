@@ -61,6 +61,11 @@ div#question {
     margin-right: 5px;
   }
 }
+
+.answer {
+  font-weight: bold;
+}
+
 div#questions-answers {
   font-size: 10pt;
   display: flex;

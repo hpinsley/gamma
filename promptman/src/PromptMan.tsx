@@ -12,6 +12,11 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
   const [message, setMessage] = React.useState('');
   const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
 
+  const client = new OpenAI({
+    apiKey: process.env['REACT_APP_OPENAI_API_KEY'], // This is the default and can be omitted
+    dangerouslyAllowBrowser: true // We should move all interactions to a server
+  });
+
   const generateInitialPrompt = async () => {
     const prompt = `
     ${initialQuestion}
@@ -68,10 +73,6 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
       <div>
         <h3>Current Answers:</h3>
         <hr />
-        <h4>I originally asked you: {initialQuestion}
-          You requested some more information
-          from me.  Here are your questions and my answers.
-        </h4>
         <ul>
           {categoryQuestionsAndAnswers.map((category, index) => (
             category.questionsAndAnswers.map((qa, qaIndex) => {
@@ -81,7 +82,7 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
               return (
                 <li key={qaIndex}>
                   <div>{qa.question}</div>
-                  <div>{qa.answer}</div>
+                  <div className="answer">{qa.answer}</div>
                 </li>
               );
             })
@@ -115,18 +116,11 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
             </ul>
           </div>
         ))}
-        <div>
-          <button>Submit Answers</button>
-        </div>
       </div>
     );
   };
 
   const getChatGPTResponse = async (prompt: string) => {
-    const client = new OpenAI({
-      apiKey: process.env['REACT_APP_OPENAI_API_KEY'], // This is the default and can be omitted
-      dangerouslyAllowBrowser: true // We should move all interactions to a server
-    });
 
     const response = await client.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
@@ -156,7 +150,7 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
 
   return (
     <div>
-      
+
       <hr />
       <div id="question">
         <label>Enter your question:</label>
@@ -174,6 +168,9 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
         </div>
         <div id='answers'>
           {displayCurrentAnswers()}
+          <div>
+            <button>Submit Answers</button>
+          </div>
         </div>
       </div>
     </div>
