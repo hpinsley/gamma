@@ -1,6 +1,6 @@
 import React from 'react';
 import OpenAI from 'openai';
-import { CategoryQuestions } from './ExpectedResponse';
+import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer } from './ExpectedResponse';
 
 interface PromptManProps {
   name: string;
@@ -10,7 +10,7 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
   const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
   const [prompt, setPrompt] = React.useState('');
   const [response, setResponse] = React.useState('');
-  const [categoryQuestions, setCategoryQuestions] = React.useState<CategoryQuestions[]>([]);
+  const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
 
   const generateInitialPrompt = async () => {
     const prompt = `
@@ -29,24 +29,43 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
 
     setPrompt(prompt);
     setResponse('Waiting...');
-    setCategoryQuestions([]);
-    
+    setCategoryQuestionsAndAnswers([]);
+
     await getChatGPTResponse(prompt);
   };
 
+  const setAnswer = (qa: QuestionAndAnswer, answer: string) => {
+    const newCategoryQuestionsAndAnswers = categoryQuestionsAndAnswers.map((category) => {
+      return {
+        category: category.category,
+        questionsAndAnswers: category.questionsAndAnswers.map((questionAndAnswer) => {
+          if (questionAndAnswer.question === qa.question) {
+            return {
+              question: questionAndAnswer.question,
+              answer: answer
+            };
+          }
+          return questionAndAnswer;
+        })
+      };
+    });
+
+    setCategoryQuestionsAndAnswers(newCategoryQuestionsAndAnswers);
+  }
+
   const displayCategoryQuestions = () => {
-    return categoryQuestions.map((category, index) => 
-        <div>
-          <h3>{category.category}</h3>
-          <ul>
-            {category.questions.map((question, index) => (
-              <li key={index}>
-                <div>{question}</div>
-                <div><input type='text'></input></div>
-              </li>
-            ))}
-          </ul>
-        </div>);
+    return categoryQuestionsAndAnswers.map((category, index) =>
+      <div>
+        <h3>{category.category}</h3>
+        <ul>
+          {category.questionsAndAnswers.map((qa, index) => (
+            <li key={index}>
+              <div>{qa.question}</div>
+              <div><input type='text' onChange={ev => setAnswer(qa, ev.target.value)} value={qa.answer}></input></div>
+            </li>
+          ))}
+        </ul>
+      </div>);
   }
 
   const getChatGPTResponse = async (prompt: string) => {
@@ -62,12 +81,25 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     });
     console.log(response);
     let responseText = response.choices[0].message.content || "";
-  // Clean up the response text to remove any extraneous formatting
+    // Clean up the response text to remove any extraneous formatting
     responseText = responseText.replace(/```json/g, '').replace(/```/g, '');
-    let responseData = JSON.parse(responseText);
+    let responseData: CategoryQuestions[] = JSON.parse(responseText);
     console.log(responseData);
     setResponse("Received response");
-    setCategoryQuestions(responseData);
+
+    const qa: CategoryQuestionsAndAnswers[] = responseData.map((category: CategoryQuestions) => {
+      return {
+        category: category.category,
+        questionsAndAnswers: category.questions.map((question: string) => {
+          return {
+            question: question,
+            answer: ''
+          };
+        })
+      };
+    });
+
+    setCategoryQuestionsAndAnswers(qa);
   };
 
   return (
@@ -88,7 +120,7 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
         <pre>{response}</pre>
       </div>
       <div>
-        { displayCategoryQuestions() }
+        {displayCategoryQuestions()}
       </div>
     </div>
   );
