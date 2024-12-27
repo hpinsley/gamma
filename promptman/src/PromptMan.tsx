@@ -7,7 +7,8 @@ interface PromptManProps {
 }
 
 const PromptMan: React.FC<PromptManProps> = ({ name }) => {
-  const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
+  // const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
+  const [initialQuestion, setinitialQuestion] = React.useState('How can I become a full stack developer?');
   const [prompt, setPrompt] = React.useState('');
   const [response, setResponse] = React.useState('');
   const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
@@ -54,19 +55,36 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
   }
 
   const displayCategoryQuestions = () => {
-    return categoryQuestionsAndAnswers.map((category, index) =>
+    if (categoryQuestionsAndAnswers.length === 0) {
+      return null;
+    }
+
+    return (
       <div>
-        <h3>{category.category}</h3>
-        <ul>
-          {category.questionsAndAnswers.map((qa, index) => (
-            <li key={index}>
-              <div>{qa.question}</div>
-              <div><input type='text' onChange={ev => setAnswer(qa, ev.target.value)} value={qa.answer}></input></div>
-            </li>
-          ))}
-        </ul>
-      </div>);
-  }
+        {categoryQuestionsAndAnswers.map((category, index) => (
+          <div key={index}>
+            <h3>{category.category}</h3>
+            <ul>
+              {category.questionsAndAnswers.map((qa, qaIndex) => (
+                <li key={qaIndex}>
+                  <div>{qa.question}</div>
+                  <div>
+                    <input
+                      type='text'
+                      onChange={ev => setAnswer(qa, ev.target.value)}
+                      value={qa.answer} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+        <div>
+          <button>Submit Answers</button>
+        </div>
+      </div>
+    );
+  };  
 
   const getChatGPTResponse = async (prompt: string) => {
     console.log(process.env);
