@@ -9,8 +9,7 @@ interface PromptManProps {
 const PromptMan: React.FC<PromptManProps> = ({ name }) => {
   // const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
   const [initialQuestion, setinitialQuestion] = React.useState('How can I become a full stack developer?');
-  const [prompt, setPrompt] = React.useState('');
-  const [response, setResponse] = React.useState('');
+  const [message, setMessage] = React.useState('');
   const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
 
   const generateInitialPrompt = async () => {
@@ -29,11 +28,16 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     
     Do not include any additional language other than the json format.  I will provide the answers to the questions in the next step.`;
 
-    setPrompt(prompt);
-    setResponse('Waiting...');
     setCategoryQuestionsAndAnswers([]);
-
-    await getChatGPTResponse(prompt);
+    setMessage('Waiting...');
+    try {
+      await getChatGPTResponse(prompt);
+      setMessage('');
+    }
+    catch (error) {
+      console.error(error);
+      setMessage(`An error occurred (${error}).  Please try again.`);
+    }
   };
 
   const setAnswer = (qa: QuestionAndAnswer, answer: string) => {
@@ -114,7 +118,6 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
   };
 
   const getChatGPTResponse = async (prompt: string) => {
-    console.log(process.env);
     const client = new OpenAI({
       apiKey: process.env['REACT_APP_OPENAI_API_KEY'], // This is the default and can be omitted
       dangerouslyAllowBrowser: true // We should move all interactions to a server
@@ -130,7 +133,6 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     responseText = responseText.replace(/```json/g, '').replace(/```/g, '');
     let responseData: CategoryQuestions[] = JSON.parse(responseText);
     console.log(responseData);
-    setResponse("Received response");
 
     const qa: CategoryQuestionsAndAnswers[] = responseData.map((category: CategoryQuestions) => {
       return {
@@ -156,14 +158,7 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
           onChange={(e) => setinitialQuestion(e.target.value)} />
       </div>
       <button id="ask" onClick={generateInitialPrompt}>Ask!</button>
-      {/* <div>
-        <h3>Generated Prompt:</h3>
-        <pre>{prompt}</pre>
-      </div>
-      <div>
-        <h3>ChatGPT Response:</h3>
-        <pre>{response}</pre>
-      </div> */}
+      <div id="message">{message}</div>
       <div id='questions-answers'>
         <div id='questions'>
           {displayCategoryQuestions()}
