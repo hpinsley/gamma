@@ -67,6 +67,11 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     return (
       <div>
         <h3>Current Answers:</h3>
+        <hr />
+        <h4>I originally asked you: {initialQuestion}
+          You requested some more information
+          from me.  Here are your questions and my answers.
+        </h4>
         <ul>
           {categoryQuestionsAndAnswers.map((category, index) => (
             category.questionsAndAnswers.map((qa, qaIndex) => {
