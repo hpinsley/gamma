@@ -54,6 +54,31 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     setCategoryQuestionsAndAnswers(newCategoryQuestionsAndAnswers);
   }
 
+  const displayCurrentAnswers = () => {
+    if (categoryQuestionsAndAnswers.length === 0) {
+      return null;
+    }
+
+    return (
+      <div>
+        <ul>
+          {categoryQuestionsAndAnswers.map((category, index) => (
+                category.questionsAndAnswers.map((qa, qaIndex) => {
+                  if (qa.answer === '') {
+                    return null;
+                  }
+                  return (
+                    <li key={qaIndex}>
+                      <div>{qa.question}</div>
+                      <div>{qa.answer}</div>
+                    </li>
+                  );
+                })
+          ))}
+        </ul>
+      </div>);
+  };  
+
   const displayCategoryQuestions = () => {
     if (categoryQuestionsAndAnswers.length === 0) {
       return null;
@@ -79,6 +104,9 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
             </ul>
           </div>
         ))}
+        <div>
+          {displayCurrentAnswers()}
+        </div>
         <div>
           <button>Submit Answers</button>
         </div>
