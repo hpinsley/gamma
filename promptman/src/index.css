@@ -19,7 +19,18 @@ code {
 button#ask {
   font-size: 20pt;
   margin-left: 10pt;
-  border-radius: 5px;
+  border-radius: 15px;
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  border: none; /* Remove border */
+  padding: 10px 20px; /* Add some padding */
+  cursor: pointer; /* Add a pointer cursor on hover */
+  font-family: Arial, sans-serif; /* Set a pleasing font */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+button#ask:hover {
+  background-color: #45a049; /* Darker green on hover */
 }
 
 div#question {

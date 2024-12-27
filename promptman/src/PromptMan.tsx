@@ -151,13 +151,17 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
 
   return (
     <div>
+      
+      <hr />
       <div id="question">
         <label>Enter your question:</label>
         <input
           value={initialQuestion}
           onChange={(e) => setinitialQuestion(e.target.value)} />
+        <button id="ask" onClick={generateInitialPrompt}>Ask</button>
       </div>
-      <button id="ask" onClick={generateInitialPrompt}>Ask!</button>
+      <hr />
+
       <div id="message">{message}</div>
       <div id='questions-answers'>
         <div id='questions'>
