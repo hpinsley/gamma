@@ -39,7 +39,7 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
       return {
         category: category.category,
         questionsAndAnswers: category.questionsAndAnswers.map((questionAndAnswer) => {
-          if (questionAndAnswer.question === qa.question) {
+          if (questionAndAnswer === qa) {
             return {
               question: questionAndAnswer.question,
               answer: answer
