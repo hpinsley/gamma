@@ -1,26 +1,53 @@
 import React from 'react';
 import OpenAI from 'openai';
+import { CategoryQuestions } from './ExpectedResponse';
 
 interface PromptManProps {
   name: string;
 }
 
 const PromptMan: React.FC<PromptManProps> = ({ name }) => {
-  const [currentProfession, setCurrentProfession] = React.useState('Data Analyst');
-  const [desiredProfession, setDesiredProfession] = React.useState('Software Engineer');
+  const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
   const [prompt, setPrompt] = React.useState('');
   const [response, setResponse] = React.useState('');
+  const [categoryQuestions, setCategoryQuestions] = React.useState<CategoryQuestions[]>([]);
 
   const generateInitialPrompt = async () => {
     const prompt = `
-    I am currently a ${currentProfession}. I want to become a ${desiredProfession}.
+    ${initialQuestion}
     What information do you need from me to help you give me the helpful and detailed response to my question?
-    Please format your response as json`;
+    Please format your response as json as a list of questions by category.  Use this format:
+    {
+      "category": "Category Name",
+      "questions": [
+        "Question 1",
+        "Question 2",
+        "Question 3"
+      ]
+    };
+    `;
 
     setPrompt(prompt);
     setResponse('Waiting...');
+    setCategoryQuestions([]);
+    
     await getChatGPTResponse(prompt);
   };
+
+  const displayCategoryQuestions = () => {
+    return categoryQuestions.map((category, index) => 
+        <div>
+          <h3>{category.category}</h3>
+          <ul>
+            {category.questions.map((question, index) => (
+              <li key={index}>
+                <div>{question}</div>
+                <div><input type='text'></input></div>
+              </li>
+            ))}
+          </ul>
+        </div>);
+  }
 
   const getChatGPTResponse = async (prompt: string) => {
     console.log(process.env);
@@ -34,23 +61,22 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
       model: 'gpt-4o',
     });
     console.log(response);
-    const responseText = response.choices[0].message.content || "";
-    setResponse(responseText);
+    let responseText = response.choices[0].message.content || "";
+  // Clean up the response text to remove any extraneous formatting
+    responseText = responseText.replace(/```json/g, '').replace(/```/g, '');
+    let responseData = JSON.parse(responseText);
+    console.log(responseData);
+    setResponse("Received response");
+    setCategoryQuestions(responseData);
   };
 
   return (
     <div>
       <div>
-        <label>Enter your current profession:</label>
+        <label>Enter your question:</label>
         <input
-          value={currentProfession}
-          onChange={(e) => setCurrentProfession(e.target.value)} />
-      </div>
-      <div>
-        <label>Enter your desired profession:</label>
-        <input
-          value={desiredProfession}
-          onChange={(e) => setDesiredProfession(e.target.value)} />
+          value={initialQuestion}
+          onChange={(e) => setinitialQuestion(e.target.value)} />
       </div>
       <button onClick={generateInitialPrompt}>Generate Prompt</button>
       <div>
@@ -60,6 +86,9 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
       <div>
         <h3>ChatGPT Response:</h3>
         <pre>{response}</pre>
+      </div>
+      <div>
+        { displayCategoryQuestions() }
       </div>
     </div>
   );
