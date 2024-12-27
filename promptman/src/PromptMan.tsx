@@ -26,7 +26,8 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
         "Question 3"
       ]
     };
-    `;
+    
+    Do not include any additional language other than the json format.  I will provide the answers to the questions in the next step.`;
 
     setPrompt(prompt);
     setResponse('Waiting...');
@@ -61,23 +62,24 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
 
     return (
       <div>
+        <h3>Current Answers:</h3>
         <ul>
           {categoryQuestionsAndAnswers.map((category, index) => (
-                category.questionsAndAnswers.map((qa, qaIndex) => {
-                  if (qa.answer === '') {
-                    return null;
-                  }
-                  return (
-                    <li key={qaIndex}>
-                      <div>{qa.question}</div>
-                      <div>{qa.answer}</div>
-                    </li>
-                  );
-                })
+            category.questionsAndAnswers.map((qa, qaIndex) => {
+              if (qa.answer === '') {
+                return null;
+              }
+              return (
+                <li key={qaIndex}>
+                  <div>{qa.question}</div>
+                  <div>{qa.answer}</div>
+                </li>
+              );
+            })
           ))}
         </ul>
       </div>);
-  };  
+  };
 
   const displayCategoryQuestions = () => {
     if (categoryQuestionsAndAnswers.length === 0) {
@@ -105,14 +107,11 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
           </div>
         ))}
         <div>
-          {displayCurrentAnswers()}
-        </div>
-        <div>
           <button>Submit Answers</button>
         </div>
       </div>
     );
-  };  
+  };
 
   const getChatGPTResponse = async (prompt: string) => {
     console.log(process.env);
@@ -150,23 +149,28 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
 
   return (
     <div>
-      <div>
+      <div id="question">
         <label>Enter your question:</label>
         <input
           value={initialQuestion}
           onChange={(e) => setinitialQuestion(e.target.value)} />
       </div>
-      <button onClick={generateInitialPrompt}>Generate Prompt</button>
-      <div>
+      <button id="ask" onClick={generateInitialPrompt}>Ask!</button>
+      {/* <div>
         <h3>Generated Prompt:</h3>
         <pre>{prompt}</pre>
       </div>
       <div>
         <h3>ChatGPT Response:</h3>
         <pre>{response}</pre>
-      </div>
-      <div>
-        {displayCategoryQuestions()}
+      </div> */}
+      <div id='questions-answers'>
+        <div id='questions'>
+          {displayCategoryQuestions()}
+        </div>
+        <div id='answers'>
+          {displayCurrentAnswers()}
+        </div>
       </div>
     </div>
   );
