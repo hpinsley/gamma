@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer } from './ExpectedResponse';
 
 interface PromptManProps {
-  onDetailPlanGenerated?: (detailedPlan: string) => any;
+  onDetailPlanGenerated?: (question: string, detailedPlan: string) => any;
 }
 
 enum PromptState {
@@ -205,7 +205,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     let responseText = response.choices[0].message.content || "";
     setDetailedPlan(responseText);
     if (onDetailPlanGenerated) {
-      onDetailPlanGenerated(responseText);
+      onDetailPlanGenerated(initialQuestion, responseText);
     }
   }
 

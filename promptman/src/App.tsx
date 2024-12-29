@@ -5,8 +5,8 @@ import PromptMan from './PromptMan';
 
 function App() {
   
-  function logDetailedPlan(detailedPlan: string) {
-    console.log("Detailed Plan is: " + detailedPlan);
+  function logDetailedPlan(question: string, detailedPlan: string) {
+    console.log(`Detailed Plan for question ${question} is ${detailedPlan}`);
   }
 
   return (
