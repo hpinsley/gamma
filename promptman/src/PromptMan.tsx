@@ -1,9 +1,19 @@
 import React from 'react';
 import OpenAI from 'openai';
+import ReactMarkdown from 'react-markdown';
+
 import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer } from './ExpectedResponse';
 
 interface PromptManProps {
   name: string;
+}
+
+enum PromptState {
+  NeedInitialQuestion,
+  FetchingInitialResponse,
+  NeedUserAnswers,
+  FetchingSecondaryResponse,
+  DisplayingFinalResults
 }
 
 enum FetchState {
@@ -20,6 +30,7 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
   const [secondSubmissionPrompt, setSecondSubmissionPrompt] = React.useState('PROMPT');
   const [detailedPlan, setDetailedPlan] = React.useState('');
   const [fetchState, setFetchState] = React.useState<FetchState>(FetchState.NotStarted);
+  const [promptState, setPromptState] = React.useState<PromptState>(PromptState.NeedInitialQuestion);
   const [errorMsg, setErrorMsg] = React.useState('');
 
   const client = new OpenAI({
@@ -44,12 +55,14 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     Do not include any additional language other than the json format.  I will provide the answers to the questions in the next step.`;
 
     setCategoryQuestionsAndAnswers([]);
+    setPromptState(PromptState.FetchingInitialResponse);
     setFetchState(FetchState.Loading);
     setErrorMsg('');
 
     try {
       await getInitialChatResponse(prompt);
       setFetchState(FetchState.Loaded);
+      setPromptState(PromptState.NeedUserAnswers);
     }
     catch (error) {
       console.error(error);
@@ -81,7 +94,19 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     setCategoryQuestionsAndAnswers(newCategoryQuestionsAndAnswers);
   }
 
+  const currentAnswerCount = (): number => {
+    return categoryQuestionsAndAnswers.reduce((acc, category) => {
+      return acc + category.questionsAndAnswers.reduce((acc, qa) => {
+        return acc + (qa.answer === '' ? 0 : 1);
+      }, 0)
+    }, 0);
+  }
+
   const displayCurrentAnswers = () => {
+    if (promptState !== PromptState.NeedUserAnswers && promptState !== PromptState.FetchingSecondaryResponse) {
+      return null;
+    }
+
     if (categoryQuestionsAndAnswers.length === 0) {
       return null;
     }
@@ -105,6 +130,11 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
             })
           ))}
         </ul>
+        <div>
+          <div>
+            {currentAnswerCount() > 0 && promptState !== PromptState.FetchingSecondaryResponse && (<button id="submit-answers" onClick={generateSecondPromptAndSend}>Submit Answers</button>)}
+          </div>
+        </div>
       </div>);
   };
 
@@ -115,6 +145,7 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
 
     return (
       <div>
+        <div>Please answer the following additional questions so that we can come up with a detailed plan for <h2>{initialQuestion}</h2></div>
         {categoryQuestionsAndAnswers.map((category, index) => (
           <div key={index}>
             <h3>{category.category}</h3>
@@ -176,6 +207,9 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
   }
 
   const generateSecondPromptAndSend = async (): Promise<void> => {
+
+    setPromptState(PromptState.FetchingSecondaryResponse);
+
     const qa: CategoryQuestionsAndAnswers[] = categoryQuestionsAndAnswers;
     const qaJson = JSON.stringify(qa);
     const prompt = `I originally asked you ${initialQuestion}\n
@@ -194,6 +228,7 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     try {
       await getSecondaryChatResponse(prompt);
       setFetchState(FetchState.Loaded);
+      setPromptState(PromptState.DisplayingFinalResults);
     }
     catch (error) {
       console.error(error);
@@ -206,48 +241,101 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     }
   }
 
-  const currentAnswerCount = (): number => {
-    return categoryQuestionsAndAnswers.reduce((acc, category) => {
-      return acc + category.questionsAndAnswers.reduce((acc, qa) => {
-        return acc + (qa.answer === '' ? 0 : 1);
-      }, 0)
-    }, 0);
+  const restart = () => {
+    setinitialQuestion('');
+    setCategoryQuestionsAndAnswers([]);
+    setDetailedPlan('');
+    setFetchState(FetchState.NotStarted);
+    setPromptState(PromptState.NeedInitialQuestion);
+    setErrorMsg('');
   }
 
-  return (
-    <div>
+  const displayDetailedPlan = () => {
+    if (promptState !== PromptState.DisplayingFinalResults) {
+      return null;
+    }
 
-      <hr />
-      <div id="question">
-        <label>Enter your question:</label>
-        <input
-          value={initialQuestion}
-          onChange={(e) => setinitialQuestion(e.target.value)} />
-        <button id="ask" onClick={generateInitialPrompt}>Ask</button>
+    return (
+      <div id='detailed-plan'>
+        <h3>Detailed Plan</h3>
+        <div id='markdown'>
+          <ReactMarkdown>{detailedPlan}</ReactMarkdown>
+        </div>
+        <button id="restart" onClick={restart}>Ask New Question</button>
       </div>
-      <hr />
+    );
+  };
 
-      <div id="message">{fetchState} - {errorMsg}</div>
+  const renderQuestionInput = () => {
+
+    if (promptState !== PromptState.NeedInitialQuestion) {
+      return null;
+    }
+
+    return (
+
+      <div>
+        <hr />
+        <div id="question">
+          <label>Enter your question:</label>
+          <input
+            value={initialQuestion}
+            onChange={(e) => setinitialQuestion(e.target.value)} />
+          <button id="ask" onClick={generateInitialPrompt}>Ask</button>
+        </div>
+      </div>
+    );
+  };
+
+  const getFetchStateMessage = (fetchState: FetchState): string => {
+    switch (fetchState) {
+      case FetchState.NotStarted:
+        return 'Not Started';
+      case FetchState.Loading:
+        return 'Loading...';
+      case FetchState.Loaded:
+        return 'Loaded';
+      case FetchState.Error:
+        return 'Error';
+      default:
+        return 'Unknown State';
+    }
+  };
+
+  const renderStatusBar = () => {
+    return (
+      <div id="status-bar">
+        {fetchState === FetchState.Loading && getFetchStateMessage(fetchState)}
+        {errorMsg}
+      </div>
+    )
+  };
+
+  const renderQuestionsAndAnswers = () => {
+    if (promptState === PromptState.NeedInitialQuestion ||
+      promptState === PromptState.FetchingInitialResponse || 
+      promptState === PromptState.DisplayingFinalResults) {
+        return null;
+    }
+
+    return (
       <div id='questions-answers'>
         <div id='questions'>
           {displayCategoryQuestions()}
         </div>
         <div id='answers'>
           {displayCurrentAnswers()}
-          <div>
-            {currentAnswerCount() > 0 && (<button id="submit-answers" onClick={generateSecondPromptAndSend}>Submit Answers</button>)}
-            <hr />
-            <div>
-              <h3>Detailed Plan</h3>
-              <textarea content={detailedPlan} />
-              <div>
-                <div>DIV DISPLAY</div>
-                <div>{detailedPlan}</div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div>
+      {renderQuestionInput()}
+      {renderQuestionsAndAnswers()}
+      {displayDetailedPlan()}
+      {renderStatusBar()}
     </div>
   );
 };

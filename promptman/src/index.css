@@ -30,7 +30,7 @@ code {
     monospace;
 }
 
-button#ask, button#submit-answers {
+button#ask, button#submit-answers, button#restart {
   font-size: 20pt;
   margin-left: 10pt;
   border-radius: 15px;
@@ -43,8 +43,16 @@ button#ask, button#submit-answers {
   transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
 
-button#ask:hover, button#submit-answers:hover {
+button#ask:hover, button#submit-answers:hover, button#restart {
   background-color: #45a049; /* Darker green on hover */
+}
+
+button#restart {
+  margin-top: 10px;
+  display: block;
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 label {
@@ -95,3 +103,24 @@ div#questions, div#answers {
   flex: 1;
 }
 
+div#detailed-plan div#markdown{
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Add padding for better spacing */
+  max-height: 80vh; /* Set a fixed height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  background-color: #f9f9f9; /* Light background color */
+}
+
+div#status-bar {
+  position: fixed; /* Fix the position at the bottom */
+  bottom: 0; /* Align to the bottom */
+  left: 0; /* Align to the left */
+  width: 100%; /* Full width */
+  background-color: black; /* Background color */
+  color: white; /* Text color */
+  padding: 10px; /* Padding for spacing */
+  text-align: center; /* Center the text */
+  font-family: Arial, sans-serif; /* Set a pleasing font */
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+}
