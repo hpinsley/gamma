@@ -4,8 +4,13 @@ import './App.css';
 import PromptMan from './PromptMan';
 
 function App() {
+  
+  function logDetailedPlan(detailedPlan: string) {
+    console.log("Detailed Plan is: " + detailedPlan);
+  }
+
   return (
-      <PromptMan name="World" />
+      <PromptMan onDetailPlanGenerated={logDetailedPlan} />
   );
 }
 

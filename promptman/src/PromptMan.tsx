@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer } from './ExpectedResponse';
 
 interface PromptManProps {
-  name: string;
+  onDetailPlanGenerated?: (detailedPlan: string) => any;
 }
 
 enum PromptState {
@@ -23,7 +23,7 @@ enum FetchState {
   Error
 };
 
-const PromptMan: React.FC<PromptManProps> = ({ name }) => {
+const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   // const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
   const [initialQuestion, setinitialQuestion] = React.useState('How can I become a full stack developer?');
   const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
@@ -203,7 +203,10 @@ const PromptMan: React.FC<PromptManProps> = ({ name }) => {
     });
     console.log(response);
     let responseText = response.choices[0].message.content || "";
-    setDetailedPlan(responseText)
+    setDetailedPlan(responseText);
+    if (onDetailPlanGenerated) {
+      onDetailPlanGenerated(responseText);
+    }
   }
 
   const generateSecondPromptAndSend = async (): Promise<void> => {
