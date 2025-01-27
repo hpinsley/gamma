@@ -216,12 +216,12 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     const qa: CategoryQuestionsAndAnswers[] = categoryQuestionsAndAnswers;
     const qaJson = JSON.stringify(qa);
     const prompt = `I originally asked you ${initialQuestion}\n
-    You asked me some follow-up questions that you felt you needed to provide me with a detailed plan.
+    You asked me some follow-up questions that you felt you needed to provide me with a detailed plan. The entire goal of this is to create the "perfect chatgpt prompt" for the user to copy and paste into chatgpt so they get the best and most helpful response based on their initial objective. 
     Here are questions you asked me and the answers I provided in json format:
     \n
     ${qaJson}
     \n
-    Please construct a detailed plan to achieve this goal.
+    With all this information, I'd like you to construct the perfect PROMPT for the user to copy and paste into gpt. Be sure to include somewhere in the prompt, "go back and forth with me until we have generated a response that helps me achieve my goal"
     `;
 
     setSecondSubmissionPrompt(prompt);
