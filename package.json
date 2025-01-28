@@ -1,8 +1,0 @@
-{
-  "devDependencies": {
-    "@testing-library/react": "^16.1.0"
-  },
-  "dependencies": {
-    "react-markdown": "^9.0.1"
-  }
-}
