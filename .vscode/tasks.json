@@ -18,6 +18,15 @@
 			"options": {
         		"cwd": "${workspaceFolder}/promptman/src"
     		}
+		},
+		{
+			"type": "npm",
+			"script": "start",
+			"problemMatcher": [],
+			"label": "npm: ejected-start-client",
+			"options": {
+        		"cwd": "${workspaceFolder}/promptman"
+    		}
 		}
 	]
 }

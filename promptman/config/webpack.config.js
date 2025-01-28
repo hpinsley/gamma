@@ -188,6 +188,11 @@ module.exports = function (webpackEnv) {
 
   return {
     target: ['browserslist'],
+    ...(isEnvDevelopment && {
+      watchOptions: {
+        poll: 1000, // Check for changes every second
+      },
+    }),
     // Webpack noise constrained to errors and warnings
     stats: 'errors-warnings',
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
