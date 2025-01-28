@@ -5,18 +5,18 @@
 			"type": "npm",
 			"script": "start",
 			"problemMatcher": [],
-			"label": "npm: start-client",
+			"label": "npm: start-server",
 			"options": {
-        		"cwd": "${workspaceFolder}/promptman"
+        		"cwd": "${workspaceFolder}/server"
     		}
 		},
 		{
 			"type": "npm",
 			"script": "start",
 			"problemMatcher": [],
-			"label": "npm: start-server",
+			"label": "npm: start-client",
 			"options": {
-        		"cwd": "${workspaceFolder}/server"
+        		"cwd": "${workspaceFolder}/promptman/src"
     		}
 		}
 	]
