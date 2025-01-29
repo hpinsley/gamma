@@ -3,29 +3,20 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "start",
+			"script": "start-client",
 			"problemMatcher": [],
-			"label": "npm: start-server",
-			"options": {
-        		"cwd": "${workspaceFolder}/server"
-    		}
-		},
-		{
-			"type": "npm",
-			"script": "start",
-			"problemMatcher": [],
-			"label": "npm: start-client",
-			"options": {
-        		"cwd": "${workspaceFolder}/promptman/src"
-    		}
-		},
-		{
-			"type": "npm",
-			"script": "start",
-			"problemMatcher": [],
-			"label": "npm: ejected-start-client",
+			"label": "start-client",
 			"options": {
         		"cwd": "${workspaceFolder}/promptman"
+    		}
+		},
+		{
+			"type": "npm",
+			"script": "start-server",
+			"problemMatcher": [],
+			"label": "start-server",
+			"options": {
+        		"cwd": "${workspaceFolder}/server"
     		}
 		}
 	]
