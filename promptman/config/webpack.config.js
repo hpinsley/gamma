@@ -191,6 +191,7 @@ module.exports = function (webpackEnv) {
     ...(isEnvDevelopment && {
       watchOptions: {
         poll: 1000, // Check for changes every second
+        ignored: /node_modules/,
       },
     }),
     // Webpack noise constrained to errors and warnings
