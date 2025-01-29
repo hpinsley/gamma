@@ -3,7 +3,6 @@
   "watch": [
       "src/**/*.ts"
   ],
-  "ignore": ["node_modules/*", "node_modules/**/*"],
   "ext": "ts",
   "exec": "ts-node ./src/app.ts",
   "legacyWatch": true,
