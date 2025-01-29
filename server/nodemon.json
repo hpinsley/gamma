@@ -1,0 +1,11 @@
+{
+  "verbose": true,
+  "watch": [
+      "src/**/*.ts"
+  ],
+  "ignore": ["node_modules/*", "node_modules/**/*"],
+  "ext": "ts",
+  "exec": "ts-node ./src/app.ts",
+  "legacyWatch": true,
+  "pollingInterval": 1000
+}
