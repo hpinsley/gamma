@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Express for debugging",
+      "program": "${workspaceFolder}/server/dist/app.js", // Adjust to your compiled entry file
+      "preLaunchTask": "tsc: build server", // Ensure this task is defined in tasks.json
+      "outFiles": [
+        "${workspaceFolder}/server/dist/**/*.js" // Adjust if your output directory is different
+      ],
+      "sourceMaps": true, // Enable source maps for debugging TypeScript
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ]
+}
