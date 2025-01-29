@@ -6,6 +6,7 @@ const app = express();
 const port = 8080;
 
 app.use(cors());
+app.use(express.json()); // This line is crucial
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello.  Use routes /promptman...');
