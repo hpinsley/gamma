@@ -1,0 +1,10 @@
+{
+    "name": "full-stack-app",
+    "version": "1.0.0",
+    "scripts": {
+      "start-all": "concurrently \"cd /workspace/server && npm run start-server\" \"cd /workspace/promptman && npm run start-client\""
+    },
+    "devDependencies": {
+      "concurrently": "^6.0.0"
+    }
+  }

@@ -280,7 +280,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
       <div>
         <hr />
         <div id="question">
-          <label>Enter your goal:</label>
+          <label>Enter your goal and/or objective:</label>
           <input
             value={initialQuestion}
             onChange={(e) => setinitialQuestion(e.target.value)} />
