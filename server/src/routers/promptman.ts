@@ -2,10 +2,6 @@ import { Router, Request, Response } from 'express';
 
 const promptManRouter = Router();
 
-promptManRouter.get('/', (req: Request, res: Response) => {
-    res.send('Hello from PromptMan!');
-  });
-
 promptManRouter.post('/process-objective', (req:any, res:any) => {
     // Access the 'objective' from the request body
     const { objective } = req.body;

@@ -18,6 +18,20 @@
 			"options": {
         		"cwd": "${workspaceFolder}/server"
     		}
-		}
+		},
+		{
+			"type": "shell",
+			"label": "tsc: build server",
+			"command": "tsc",
+			"args": [],
+			"group": {
+			  "kind": "build",
+			  "isDefault": false
+			},
+			"problemMatcher": ["$tsc"],
+			"options": {
+        		"cwd": "${workspaceFolder}/server"
+    		}
+		  }
 	]
 }

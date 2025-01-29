@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json()); // This line is crucial
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello.  Use routes /promptman...');
+  res.send('Hello from gamma...');
 });
 
 app.use('/promptman', promptManRouter);

@@ -170,10 +170,12 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
   const getInitialChatResponse = async (prompt: string) => {
 
-    const response = await client.chat.completions.create({
-      messages: [{ role: 'user', content: prompt }],
-      model: 'gpt-4o',
-    });
+    // const response = await client.chat.completions.create({
+    //   messages: [{ role: 'user', content: prompt }],
+    //   model: 'gpt-4o',
+    // });
+    const response = await fetch("http://localhost:8080");
+
     console.log(response);
     let responseText = response.choices[0].message.content || "";
     // Clean up the response text to remove any extraneous formatting
