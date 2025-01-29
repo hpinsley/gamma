@@ -4,7 +4,5 @@
       "src/**/*.ts"
   ],
   "ext": "ts",
-  "exec": "ts-node ./src/app.ts",
-  "legacyWatch": true,
-  "pollingInterval": 1000
+  "exec": "ts-node ./src/app.ts"
 }
