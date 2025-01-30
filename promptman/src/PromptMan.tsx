@@ -183,6 +183,9 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
     const request = new Request("http://localhost:8080/promptman/process-objective", {
       method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: bodyString,
     });
 
