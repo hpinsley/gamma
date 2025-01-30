@@ -5,6 +5,7 @@ import promptManRouter from './routers/promptman'; // Adjust the path as necessa
 const app = express();
 const port = 8080;
 
+console.log("Server startup");
 app.use(cors());
 app.use(express.json()); // This line is crucial
 

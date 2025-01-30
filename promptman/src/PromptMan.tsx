@@ -174,28 +174,31 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     //   messages: [{ role: 'user', content: prompt }],
     //   model: 'gpt-4o',
     // });
-    const response = await fetch("http://localhost:8080");
-
-    console.log(response);
-    let responseText = response.choices[0].message.content || "";
-    // Clean up the response text to remove any extraneous formatting
-    responseText = responseText.replace(/```json/g, '').replace(/```/g, '');
-    let responseData: CategoryQuestions[] = JSON.parse(responseText);
-    console.log(responseData);
-
-    const qa: CategoryQuestionsAndAnswers[] = responseData.map((category: CategoryQuestions) => {
-      return {
-        category: category.category,
-        questionsAndAnswers: category.questions.map((question: string) => {
-          return {
-            question: question,
-            answer: ''
-          };
-        })
-      };
+    const response = await fetch("http://localhost:8080/promptman/process-objective", {
+      // body: JSON.stringify({ username: "example" }),
+      body: prompt
     });
 
-    setCategoryQuestionsAndAnswers(qa);
+    console.log(response);
+    // let responseText = response.choices[0].message.content || "";
+    // // Clean up the response text to remove any extraneous formatting
+    // responseText = responseText.replace(/```json/g, '').replace(/```/g, '');
+    // let responseData: CategoryQuestions[] = JSON.parse(responseText);
+    // console.log(responseData);
+
+    // const qa: CategoryQuestionsAndAnswers[] = responseData.map((category: CategoryQuestions) => {
+    //   return {
+    //     category: category.category,
+    //     questionsAndAnswers: category.questions.map((question: string) => {
+    //       return {
+    //         question: question,
+    //         answer: ''
+    //       };
+    //     })
+    //   };
+    // });
+
+    // setCategoryQuestionsAndAnswers(qa);
   };
 
   const getSecondaryChatResponse = async (prompt: string) => {
