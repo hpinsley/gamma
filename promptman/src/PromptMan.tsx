@@ -189,10 +189,9 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
       body: bodyString,
     });
 
-    console.log(request);
-
     const response = await fetch(request);
-    console.log(response);
+    const constructed_prompt = await response.text();
+    console.log(constructed_prompt);
     
     // let responseText = response.choices[0].message.content || "";
     // // Clean up the response text to remove any extraneous formatting

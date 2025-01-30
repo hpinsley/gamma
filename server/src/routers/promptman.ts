@@ -24,7 +24,7 @@ promptManRouter.post('/process-objective', (req:any, res:any) => {
     const apiKey = Utils.get_openapi_api_key()
 
     res.set('Content-Type', 'text/plain');
-    res.send(apiKey);
+    res.send(prompt);
   });
 
 const generateInitialPrompt = (objective:string): string => {
