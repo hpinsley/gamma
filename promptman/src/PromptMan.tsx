@@ -60,7 +60,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     setErrorMsg('');
 
     try {
-      await getInitialChatResponse(prompt);
+      await getInitialChatResponse(initialQuestion, prompt);
       setFetchState(FetchState.Loaded);
       setPromptState(PromptState.NeedUserAnswers);
     }
@@ -168,18 +168,29 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     );
   };
 
-  const getInitialChatResponse = async (prompt: string) => {
+  const getInitialChatResponse = async (initialQuestion: string, prompt: string) => {
 
     // const response = await client.chat.completions.create({
     //   messages: [{ role: 'user', content: prompt }],
     //   model: 'gpt-4o',
     // });
-    const response = await fetch("http://localhost:8080/promptman/process-objective", {
-      // body: JSON.stringify({ username: "example" }),
-      body: prompt
+
+    const body = {
+      objective: initialQuestion
+    };
+    
+    const bodyString = JSON.stringify(body);
+
+    const request = new Request("http://localhost:8080/promptman/process-objective", {
+      method: "POST",
+      body: bodyString,
     });
 
+    console.log(request);
+
+    const response = await fetch(request);
     console.log(response);
+    
     // let responseText = response.choices[0].message.content || "";
     // // Clean up the response text to remove any extraneous formatting
     // responseText = responseText.replace(/```json/g, '').replace(/```/g, '');
