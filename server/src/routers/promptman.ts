@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import Utils from '../common/utils';
 import OpenAI from 'openai';
+import { CategoryQuestionsAndAnswers } from '../models/PromptModels';
 
 const promptManRouter = Router();
 
@@ -45,7 +46,25 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
     }
   });
 
-const generateInitialPrompt = (objective:string): string => {
+  promptManRouter.post('/process-user-answers', async (req:any, res:any) => {
+    // Access the 'objective' from the request body
+    const { userObjective:string, qa }  = req.body;
+  
+    const questionsAndAnswers:CategoryQuestionsAndAnswers[] = qa
+    const first = questionsAndAnswers[0]
+
+    
+    try {
+      console.log(`First category is ${first.category}`);
+    }
+    catch (error) {
+
+      console.error(error);
+      res.json(error);
+    }
+  });
+
+  const generateInitialPrompt = (objective:string): string => {
   const prompt = `
   ${objective}
   What information do you need from me to help you give me the helpful and detailed response to my question?

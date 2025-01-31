@@ -205,37 +205,48 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   }
 
   const submitUserAnswersToInitialQuestions = async (): Promise<void> => {
-
-    setPromptState(PromptState.FetchingSecondaryResponse);
-
-    const qa: CategoryQuestionsAndAnswers[] = categoryQuestionsAndAnswers;
-    const qaJson = JSON.stringify(qa);
-    console.log('This is what I would send to the server');
- 
-    const payload = {
-      userObjective: userObjective,
-      qa: qa
-    }
-    console.log('This is what I would send to the server');
-    console.log(JSON.stringify(payload));
-
-    const prompt = `I originally asked you ${userObjective}\n
-    You asked me some follow-up questions that you felt you needed to provide me with a detailed plan. The entire goal of this is to create the "perfect chatgpt prompt" for the user to copy and paste into chatgpt so they get the best and most helpful response based on their initial objective. 
-    Here are questions you asked me and the answers I provided in json format:
-    \n
-    ${qaJson}
-    \n
-    With all this information, I'd like you to construct the perfect PROMPT for the user to copy and paste into gpt. Be sure to include somewhere in the prompt, "go back and forth with me until we have generated a response that helps me achieve my goal"
-    `;
-
-    setSecondSubmissionPrompt(prompt);
-    setFetchState(FetchState.Loading);
-    setErrorMsg('');
-
     try {
-      await getSecondaryChatResponse(prompt);
-      setFetchState(FetchState.Loaded);
-      setPromptState(PromptState.DisplayingFinalResults);
+
+      setPromptState(PromptState.FetchingSecondaryResponse);
+
+      const qa: CategoryQuestionsAndAnswers[] = categoryQuestionsAndAnswers;
+  
+      const payload = {
+        userObjective: userObjective,
+        qa: qa
+      }
+      console.log('This is what I would send to the server');
+      const bodyString = JSON.stringify(payload);
+      console.log(bodyString);
+
+      const request = new Request("http://localhost:8080/promptman/process-user-answers", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: bodyString,
+      });
+
+      const response = await fetch(request);
+      const chatReply = await response.text();
+      console.log(chatReply);
+
+      // const prompt = `I originally asked you ${userObjective}\n
+      // You asked me some follow-up questions that you felt you needed to provide me with a detailed plan. The entire goal of this is to create the "perfect chatgpt prompt" for the user to copy and paste into chatgpt so they get the best and most helpful response based on their initial objective. 
+      // Here are questions you asked me and the answers I provided in json format:
+      // \n
+      // ${qaJson}
+      // \n
+      // With all this information, I'd like you to construct the perfect PROMPT for the user to copy and paste into gpt. Be sure to include somewhere in the prompt, "go back and forth with me until we have generated a response that helps me achieve my goal"
+      // `;
+
+      // setSecondSubmissionPrompt(prompt);
+      // setFetchState(FetchState.Loading);
+      // setErrorMsg('');
+
+      // await getSecondaryChatResponse(prompt);
+      // setFetchState(FetchState.Loaded);
+      // setPromptState(PromptState.DisplayingFinalResults);
     }
     catch (error) {
       console.error(error);
