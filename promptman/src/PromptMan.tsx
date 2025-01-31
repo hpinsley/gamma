@@ -118,7 +118,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
         </ul>
         <div>
           <div>
-            {currentAnswerCount() > 0 && promptState !== PromptState.FetchingSecondaryResponse && (<button id="submit-answers" onClick={generateSecondPromptAndSend}>Submit Answers</button>)}
+            {currentAnswerCount() > 0 && promptState !== PromptState.FetchingSecondaryResponse && (<button id="submit-answers" onClick={submitUserAnswersToInitialQuestions}>Submit Answers</button>)}
           </div>
         </div>
       </div>);
@@ -204,12 +204,21 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     }
   }
 
-  const generateSecondPromptAndSend = async (): Promise<void> => {
+  const submitUserAnswersToInitialQuestions = async (): Promise<void> => {
 
     setPromptState(PromptState.FetchingSecondaryResponse);
 
     const qa: CategoryQuestionsAndAnswers[] = categoryQuestionsAndAnswers;
     const qaJson = JSON.stringify(qa);
+    console.log('This is what I would send to the server');
+ 
+    const payload = {
+      userObjective: userObjective,
+      qa: qa
+    }
+    console.log('This is what I would send to the server');
+    console.log(JSON.stringify(payload));
+
     const prompt = `I originally asked you ${userObjective}\n
     You asked me some follow-up questions that you felt you needed to provide me with a detailed plan. The entire goal of this is to create the "perfect chatgpt prompt" for the user to copy and paste into chatgpt so they get the best and most helpful response based on their initial objective. 
     Here are questions you asked me and the answers I provided in json format:
