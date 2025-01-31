@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
 import Utils from '../common/utils';
+import OpenAI from 'openai';
 
 const promptManRouter = Router();
 
-promptManRouter.post('/process-objective', (req:any, res:any) => {
+promptManRouter.post('/process-objective', async (req:any, res:any) => {
     // Access the 'objective' from the request body
     const { objective } = req.body;
   
@@ -13,18 +14,31 @@ promptManRouter.post('/process-objective', (req:any, res:any) => {
       return res.status(400).json({ error: 'Objective must be a string' });
     }
   
-    // Perform your logic with 'objective' here
-    // ...
-  
     // Respond with JSON
     // res.json({ message: 'Received objective', objective: objective });
   
     const prompt = generateInitialPrompt(objective);
 
-    const apiKey = Utils.get_openapi_api_key()
 
-    res.set('Content-Type', 'text/plain');
-    res.send(prompt);
+    const client = new OpenAI({
+      apiKey: Utils.get_openapi_api_key(), // This is the default and can be omitted
+      dangerouslyAllowBrowser: true // We should move all interactions to a server
+    });
+  
+    try {
+      const response = await client.chat.completions.create({
+        messages: [{ role: 'user', content: prompt }],
+        model: 'gpt-4o',
+       });
+  
+      // res.set('Content-Type', 'application/json');
+      res.json(response);  
+    }
+    catch (error) {
+
+      console.error(error);
+      res.json(error);
+    }
   });
 
 const generateInitialPrompt = (objective:string): string => {
