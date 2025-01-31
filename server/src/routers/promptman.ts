@@ -1,7 +1,7 @@
-import { Router, Request, Response } from 'express';
+import express, { Router, Request, Response } from 'express';
 import Utils from '../common/utils';
 import OpenAI from 'openai';
-import { CategoryQuestionsAndAnswers } from '../models/PromptModels';
+import { ProcessUserAnswersRequestBody } from '../models/PromptModels';
 
 const promptManRouter = Router();
 
@@ -46,19 +46,15 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
     }
   });
 
-  promptManRouter.post('/process-user-answers', async (req:any, res:any) => {
-    // Access the 'objective' from the request body
-    const { userObjective:string, qa }  = req.body;
   
-    const questionsAndAnswers:CategoryQuestionsAndAnswers[] = qa
-    const first = questionsAndAnswers[0]
-
+  promptManRouter.post('/process-user-answers', async (req: express.Request<{}, {}, ProcessUserAnswersRequestBody>, res:any) => {
+    // Access the 'objective' from the request body
     
     try {
-      console.log(`First category is ${first.category}`);
+      console.log(`Your initial objective was ${req.body.userObjective}`);
+      console.log(`First category is ${req.body.qa[0]}`);
     }
     catch (error) {
-
       console.error(error);
       res.json(error);
     }

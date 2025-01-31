@@ -12,3 +12,8 @@ export interface CategoryQuestionsAndAnswers {
     category: string;
     questionsAndAnswers: QuestionAndAnswer[];
 }
+
+export interface ProcessUserAnswersRequestBody {
+    userObjective: string; // or the appropriate type
+    qa: CategoryQuestionsAndAnswers[];
+}
