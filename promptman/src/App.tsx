@@ -2,7 +2,6 @@ import React from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import PromptMan from './PromptMan';
-import ServerTest from './ServerTest';
 
 function App() {
   
@@ -12,7 +11,6 @@ function App() {
 
   return (
       <div>
-        <ServerTest />
         <PromptMan onDetailPlanGenerated={logDetailedPlan} />
       </div>);
 }

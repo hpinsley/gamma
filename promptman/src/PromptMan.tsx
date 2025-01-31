@@ -25,7 +25,7 @@ enum FetchState {
 
 const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   // const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
-  const [initialQuestion, setinitialQuestion] = React.useState('How can I become a full stack developer?');
+  const [userObjective, setUserObjective] = React.useState('How can I become a full stack developer?');
   const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
   const [secondSubmissionPrompt, setSecondSubmissionPrompt] = React.useState('PROMPT');
   const [detailedPlan, setDetailedPlan] = React.useState('');
@@ -38,21 +38,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     dangerouslyAllowBrowser: true // We should move all interactions to a server
   });
 
-  const generateInitialPrompt = async () => {
-    const prompt = `
-    ${initialQuestion}
-    What information do you need from me to help you give me the helpful and detailed response to my question?
-    Please format your response as json as a list of questions by category.  Use this format:
-    {
-      "category": "Category Name",
-      "questions": [
-        "Question 1",
-        "Question 2",
-        "Question 3"
-      ]
-    };
-    
-    Do not include any additional language other than the json format.  I will provide the answers to the questions in the next step.`;
+  const processUserObjective = async () => {
 
     setCategoryQuestionsAndAnswers([]);
     setPromptState(PromptState.FetchingInitialResponse);
@@ -60,7 +46,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     setErrorMsg('');
 
     try {
-      await getInitialChatResponse(initialQuestion, prompt);
+      await getServerQAndAFromUserObjective(userObjective);
       setFetchState(FetchState.Loaded);
       setPromptState(PromptState.NeedUserAnswers);
     }
@@ -145,7 +131,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
     return (
       <div>
-        <div>Please answer the following additional questions so that we can come up with a detailed plan for <h2>{initialQuestion}</h2></div>
+        <div>Please answer the following additional questions so that we can come up with a detailed plan for <h2>{userObjective}</h2></div>
         {categoryQuestionsAndAnswers.map((category, index) => (
           <div key={index}>
             <h3>{category.category}</h3>
@@ -168,10 +154,10 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     );
   };
 
-  const getInitialChatResponse = async (initialQuestion: string, prompt: string) => {
+  const getServerQAndAFromUserObjective = async (userObjective: string) => {
 
     const body = {
-      objective: initialQuestion
+      objective: userObjective
     };
 
     const bodyString = JSON.stringify(body);
@@ -214,7 +200,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     let responseText = response.choices[0].message.content || "";
     setDetailedPlan(responseText);
     if (onDetailPlanGenerated) {
-      onDetailPlanGenerated(initialQuestion, responseText);
+      onDetailPlanGenerated(userObjective, responseText);
     }
   }
 
@@ -224,7 +210,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
     const qa: CategoryQuestionsAndAnswers[] = categoryQuestionsAndAnswers;
     const qaJson = JSON.stringify(qa);
-    const prompt = `I originally asked you ${initialQuestion}\n
+    const prompt = `I originally asked you ${userObjective}\n
     You asked me some follow-up questions that you felt you needed to provide me with a detailed plan. The entire goal of this is to create the "perfect chatgpt prompt" for the user to copy and paste into chatgpt so they get the best and most helpful response based on their initial objective. 
     Here are questions you asked me and the answers I provided in json format:
     \n
@@ -254,7 +240,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   }
 
   const restart = () => {
-    setinitialQuestion('');
+    setUserObjective('');
     setCategoryQuestionsAndAnswers([]);
     setDetailedPlan('');
     setFetchState(FetchState.NotStarted);
@@ -291,9 +277,9 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
         <div id="question">
           <label>Enter your goal or objective:</label>
           <input
-            value={initialQuestion}
-            onChange={(e) => setinitialQuestion(e.target.value)} />
-          <button id="ask" onClick={generateInitialPrompt}>Ask</button>
+            value={userObjective}
+            onChange={(e) => setUserObjective(e.target.value)} />
+          <button id="ask" onClick={processUserObjective}>Ask</button>
         </div>
       </div>
     );
