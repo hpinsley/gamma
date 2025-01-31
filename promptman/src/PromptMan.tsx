@@ -170,15 +170,10 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
   const getInitialChatResponse = async (initialQuestion: string, prompt: string) => {
 
-    // const response = await client.chat.completions.create({
-    //   messages: [{ role: 'user', content: prompt }],
-    //   model: 'gpt-4o',
-    // });
-
     const body = {
       objective: initialQuestion
     };
-    
+
     const bodyString = JSON.stringify(body);
 
     const request = new Request("http://localhost:8080/promptman/process-objective", {
@@ -190,28 +185,24 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     });
 
     const response = await fetch(request);
-    const constructed_prompt = await response.text();
-    console.log(constructed_prompt);
+    const chatReply = await response.json();
+    const responseData: CategoryQuestions[] = JSON.parse(chatReply);
+
+    console.log(responseData);
+
+    const qa: CategoryQuestionsAndAnswers[] = responseData.map((category: CategoryQuestions) => {
+      return {
+        category: category.category,
+        questionsAndAnswers: category.questions.map((question: string) => {
+          return {
+            question: question,
+            answer: ''
+          };
+        })
+      };
+    });
     
-    // let responseText = response.choices[0].message.content || "";
-    // // Clean up the response text to remove any extraneous formatting
-    // responseText = responseText.replace(/```json/g, '').replace(/```/g, '');
-    // let responseData: CategoryQuestions[] = JSON.parse(responseText);
-    // console.log(responseData);
-
-    // const qa: CategoryQuestionsAndAnswers[] = responseData.map((category: CategoryQuestions) => {
-    //   return {
-    //     category: category.category,
-    //     questionsAndAnswers: category.questions.map((question: string) => {
-    //       return {
-    //         question: question,
-    //         answer: ''
-    //       };
-    //     })
-    //   };
-    // });
-
-    // setCategoryQuestionsAndAnswers(qa);
+    setCategoryQuestionsAndAnswers(qa);
   };
 
   const getSecondaryChatResponse = async (prompt: string) => {
@@ -334,9 +325,9 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
   const renderQuestionsAndAnswers = () => {
     if (promptState === PromptState.NeedInitialQuestion ||
-      promptState === PromptState.FetchingInitialResponse || 
+      promptState === PromptState.FetchingInitialResponse ||
       promptState === PromptState.DisplayingFinalResults) {
-        return null;
+      return null;
     }
 
     return (
