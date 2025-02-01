@@ -1,4 +1,5 @@
 import { CategoryQuestions, CategoryQuestionsAndAnswers, ProcessUserAnswersRequestBody, Options } from '../models/PromptModels';
+import { PROMPTMAN_SERVICE_URL } from '../config';
 
 export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string): Promise<CategoryQuestions[]> => {
 
@@ -8,7 +9,10 @@ export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string
 
     const bodyString = JSON.stringify(body);
 
-    const request = new Request("http://localhost:8080/promptman/process-objective", {
+    const url = `${PROMPTMAN_SERVICE_URL}/promptman/process-objective`;
+    console.log(`url: ${url}`);
+
+    const request = new Request(url, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -33,7 +37,10 @@ export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string
 
     const bodyString = JSON.stringify(payload);
 
-    const request = new Request("http://localhost:8080/promptman/process-user-answers", {
+    const url = `${PROMPTMAN_SERVICE_URL}/promptman/process-user-answers`;
+    console.log(`url: ${url}`);
+
+    const request = new Request(url, {
     method: "POST",
     headers: {
         'Content-Type': 'application/json',

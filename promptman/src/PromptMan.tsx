@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, ProcessUserAnswersRequestBody, Options } from './models/PromptModels';
+import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, Options } from './models/PromptModels';
 import {getServerQAndAFromUserObjectiveAsync, submitUserAnswersToInitialQuestionsAsync} from './services/promptman_service';
 
 interface PromptManProps {
