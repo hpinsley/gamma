@@ -27,7 +27,6 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   // const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
   const [userObjective, setUserObjective] = React.useState('How can I become a full stack developer?');
   const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
-  const [secondSubmissionPrompt, setSecondSubmissionPrompt] = React.useState('PROMPT');
   const [detailedPlan, setDetailedPlan] = React.useState('');
   const [fetchState, setFetchState] = React.useState<FetchState>(FetchState.NotStarted);
   const [promptState, setPromptState] = React.useState<PromptState>(PromptState.NeedInitialQuestion);
@@ -191,36 +190,21 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     setCategoryQuestionsAndAnswers(qa);
   };
 
-  const getSecondaryChatResponse = async (prompt: string) => {
-    const response = await client.chat.completions.create({
-      messages: [{ role: 'user', content: prompt }],
-      model: 'gpt-4o',
-    });
-    console.log(response);
-    let responseText = response.choices[0].message.content || "";
-    setDetailedPlan(responseText);
-    if (onDetailPlanGenerated) {
-      onDetailPlanGenerated(userObjective, responseText);
-    }
-  }
-
   const submitUserAnswersToInitialQuestions = async (): Promise<void> => {
     try {
 
       setPromptState(PromptState.FetchingSecondaryResponse);
-
-      const qa: CategoryQuestionsAndAnswers[] = categoryQuestionsAndAnswers;
+      setFetchState(FetchState.Loading);
+      setErrorMsg('');
   
       const payload:ProcessUserAnswersRequestBody = {
         userObjective: userObjective,
-        qa: qa,
+        qa: categoryQuestionsAndAnswers,
         options: {
           removeEmptyQuestions: true
         }
       }
-      console.log('This is what I would send to the server');
       const bodyString = JSON.stringify(payload);
-      console.log(bodyString);
 
       const request = new Request("http://localhost:8080/promptman/process-user-answers", {
         method: "POST",
@@ -231,25 +215,14 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
       });
 
       const response = await fetch(request);
-      const chatReply = await response.text();
-      console.log(chatReply);
-
-      // const prompt = `I originally asked you ${userObjective}\n
-      // You asked me some follow-up questions that you felt you needed to provide me with a detailed plan. The entire goal of this is to create the "perfect chatgpt prompt" for the user to copy and paste into chatgpt so they get the best and most helpful response based on their initial objective. 
-      // Here are questions you asked me and the answers I provided in json format:
-      // \n
-      // ${qaJson}
-      // \n
-      // With all this information, I'd like you to construct the perfect PROMPT for the user to copy and paste into gpt. Be sure to include somewhere in the prompt, "go back and forth with me until we have generated a response that helps me achieve my goal"
-      // `;
-
-      // setSecondSubmissionPrompt(prompt);
-      // setFetchState(FetchState.Loading);
-      // setErrorMsg('');
-
-      // await getSecondaryChatResponse(prompt);
-      // setFetchState(FetchState.Loaded);
-      // setPromptState(PromptState.DisplayingFinalResults);
+      const responseText = await response.text();
+      setDetailedPlan(responseText);
+      if (onDetailPlanGenerated) {
+        onDetailPlanGenerated(userObjective, responseText);
+      }
+  
+      setFetchState(FetchState.Loaded);
+      setPromptState(PromptState.DisplayingFinalResults);
     }
     catch (error) {
       console.error(error);

@@ -66,10 +66,21 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
                 ));
 
        const qaWithEmptyCategoriesRemoved = qaWithNonAnswersRemoved.filter(categoryQuestionsAndAnswers => categoryQuestionsAndAnswers.questionsAndAnswers.length > 0);
-       console.log(qaWithEmptyCategoriesRemoved)
        const nextPrompt = generateNextPrompt(userObjective, qaWithEmptyCategoriesRemoved, options)
-        console.log(nextPrompt);
-       res.send(nextPrompt);
+       
+       console.log(nextPrompt);
+       const client = new OpenAI({
+        apiKey: Utils.get_openapi_api_key(), // This is the default and can be omitted
+        dangerouslyAllowBrowser: true // We should move all interactions to a server
+      });
+  
+      const response = await client.chat.completions.create({
+          messages: [{ role: 'user', content: nextPrompt }],
+          model: 'gpt-4o',
+        });
+        console.log(response);
+      let responseText = response.choices[0].message.content || "";
+      res.send(responseText);
     }
     catch (error) {
       console.error(error);
