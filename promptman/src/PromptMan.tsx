@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, ProcessUserAnswersRequestBody } from './models/PromptModels';
-import {getServerQAndAFromUserObjectiveAsync} from './services/promptman_service';
+import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, ProcessUserAnswersRequestBody, Options } from './models/PromptModels';
+import {getServerQAndAFromUserObjectiveAsync, submitUserAnswersToInitialQuestionsAsync} from './services/promptman_service';
 
 interface PromptManProps {
   onDetailPlanGenerated?: (question: string, detailedPlan: string) => any;
@@ -176,32 +176,18 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
       setPromptState(PromptState.FetchingSecondaryResponse);
       setFetchState(FetchState.Loading);
       setErrorMsg('');
-  
-      const payload:ProcessUserAnswersRequestBody = {
-        userObjective: userObjective,
-        qa: categoryQuestionsAndAnswers,
-        options: {
-          removeEmptyQuestions: true
-        }
+
+      const options:Options = {
+        removeEmptyQuestions: true
       }
-      const bodyString = JSON.stringify(payload);
+  
+      const finalPrompt = await submitUserAnswersToInitialQuestionsAsync(userObjective, categoryQuestionsAndAnswers, options);
 
-      const request = new Request("http://localhost:8080/promptman/process-user-answers", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: bodyString,
-      });
-
-      const response = await fetch(request);
-      const responseText = await response.text();
-      setDetailedPlan(responseText);
+      setDetailedPlan(finalPrompt);
       if (onDetailPlanGenerated) {
-        onDetailPlanGenerated(userObjective, responseText);
+        onDetailPlanGenerated(userObjective, finalPrompt);
       }
-  
-      setFetchState(FetchState.Loaded);
+        setFetchState(FetchState.Loaded);
       setPromptState(PromptState.DisplayingFinalResults);
     }
     catch (error) {

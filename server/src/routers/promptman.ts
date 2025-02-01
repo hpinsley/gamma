@@ -104,7 +104,9 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
       "Question 2",
       "Question 3"
     ]
-  }`;
+  }
+    
+  Do not include any additional commentatry or niceties in your response.  Just the json.`;
   
   return prompt;
 }
