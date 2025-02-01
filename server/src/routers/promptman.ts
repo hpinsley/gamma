@@ -5,6 +5,7 @@ import { ProcessUserAnswersRequestBody, Options, CategoryQuestionsAndAnswers} fr
 
 const promptManRouter = Router();
 
+
 promptManRouter.post('/process-objective', async (req:any, res:any) => {
     // Access the 'objective' from the request body
     const { objective } = req.body;
@@ -21,10 +22,7 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
     const prompt = generateInitialPrompt(objective);
 
 
-    const client = new OpenAI({
-      apiKey: Utils.get_openapi_api_key(), // This is the default and can be omitted
-      dangerouslyAllowBrowser: true // We should move all interactions to a server
-    });
+    const client = Utils.getOpenAIClient();
   
     try {
       const response = await client.chat.completions.create({
@@ -73,10 +71,8 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
        const nextPrompt = generateNextPrompt(userObjective, qaWithEmptyCategoriesRemoved, options)
        
        console.log(nextPrompt);
-       const client = new OpenAI({
-        apiKey: Utils.get_openapi_api_key(), // This is the default and can be omitted
-        dangerouslyAllowBrowser: true // We should move all interactions to a server
-      });
+
+       const client = Utils.getOpenAIClient();
   
       const response = await client.chat.completions.create({
           messages: [{ role: 'user', content: nextPrompt }],
