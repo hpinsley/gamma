@@ -2,7 +2,7 @@ import React from 'react';
 import OpenAI from 'openai';
 import ReactMarkdown from 'react-markdown';
 
-import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer } from './ExpectedResponse';
+import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, Options, ProcessUserAnswersRequestBody } from './models/PromptModels';
 
 interface PromptManProps {
   onDetailPlanGenerated?: (question: string, detailedPlan: string) => any;
@@ -211,9 +211,12 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
       const qa: CategoryQuestionsAndAnswers[] = categoryQuestionsAndAnswers;
   
-      const payload = {
+      const payload:ProcessUserAnswersRequestBody = {
         userObjective: userObjective,
-        qa: qa
+        qa: qa,
+        options: {
+          removeEmptyQuestions: true
+        }
       }
       console.log('This is what I would send to the server');
       const bodyString = JSON.stringify(payload);

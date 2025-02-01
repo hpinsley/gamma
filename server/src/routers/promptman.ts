@@ -1,7 +1,7 @@
 import express, { Router, Request, Response } from 'express';
 import Utils from '../common/utils';
 import OpenAI from 'openai';
-import { ProcessUserAnswersRequestBody } from '../models/PromptModels';
+import { ProcessUserAnswersRequestBody, Options, CategoryQuestionsAndAnswers} from '../models/PromptModels';
 
 const promptManRouter = Router();
 
@@ -52,7 +52,24 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
     
     try {
       console.log(`Your initial objective was ${req.body.userObjective}`);
-      console.log(`First category is ${req.body.qa[0]}`);
+      console.log(`First category is ${req.body.qa[0].category}`);
+
+       const userObjective = req.body.userObjective;
+       const qaListByCategory = req.body.qa;
+       const options = req.body.options;
+
+       const qaWithNonAnswersRemoved = qaListByCategory.map(categoryQuestionsAndAnswers => (
+              {...categoryQuestionsAndAnswers,
+                  questionsAndAnswers: 
+                    categoryQuestionsAndAnswers.questionsAndAnswers.filter(qa => qa.answer)
+                  }
+                ));
+
+       const qaWithEmptyCategoriesRemoved = qaWithNonAnswersRemoved.filter(categoryQuestionsAndAnswers => categoryQuestionsAndAnswers.questionsAndAnswers.length > 0);
+       console.log(qaWithEmptyCategoriesRemoved)
+       const nextPrompt = generateNextPrompt(userObjective, qaWithEmptyCategoriesRemoved, options)
+        console.log(nextPrompt);
+       res.send(nextPrompt);
     }
     catch (error) {
       console.error(error);
@@ -75,6 +92,19 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
   }`;
   
   return prompt;
+}
+
+const generateNextPrompt = (userObjective: string, qaWithEmptyCategoriesRemoved: CategoryQuestionsAndAnswers[], options: Options|undefined): string => {
+  // Implement the logic for generating the next prompt based on the filtered QA and options
+      const qaJson = JSON.stringify(qaWithEmptyCategoriesRemoved, null, 2);
+      const prompt = `I originally asked you ${userObjective}
+You asked me some follow-up questions that you felt you needed to provide me with a detailed plan. The entire goal of this is to create the "perfect chatgpt prompt" for the user to copy and paste into chatgpt so they get the best and most helpful response based on their initial objective. 
+Here are questions you asked me and the answers I provided in json format:
+${qaJson}
+With all this information, I'd like you to construct the perfect PROMPT for the user to copy and paste into gpt. Be sure to include somewhere in the prompt, "go back and forth with me until we have generated a response that helps me achieve my goal"
+`;
+
+      return prompt;
 }
 
 export default promptManRouter;

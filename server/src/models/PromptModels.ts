@@ -13,7 +13,12 @@ export interface CategoryQuestionsAndAnswers {
     questionsAndAnswers: QuestionAndAnswer[];
 }
 
+export interface Options {
+    removeEmptyQuestions: true
+}
+
 export interface ProcessUserAnswersRequestBody {
     userObjective: string; // or the appropriate type
     qa: CategoryQuestionsAndAnswers[];
+    options?: Options | undefined;
 }
