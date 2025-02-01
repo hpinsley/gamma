@@ -1,8 +1,8 @@
 import React from 'react';
-import OpenAI from 'openai';
 import ReactMarkdown from 'react-markdown';
 
-import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, Options, ProcessUserAnswersRequestBody } from './models/PromptModels';
+import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, ProcessUserAnswersRequestBody } from './models/PromptModels';
+import {getServerQAndAFromUserObjectiveAsync} from './services/promptman_service';
 
 interface PromptManProps {
   onDetailPlanGenerated?: (question: string, detailedPlan: string) => any;
@@ -31,11 +31,6 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   const [fetchState, setFetchState] = React.useState<FetchState>(FetchState.NotStarted);
   const [promptState, setPromptState] = React.useState<PromptState>(PromptState.NeedInitialQuestion);
   const [errorMsg, setErrorMsg] = React.useState('');
-
-  const client = new OpenAI({
-    apiKey: process.env['REACT_APP_OPENAI_API_KEY'], // This is the default and can be omitted
-    dangerouslyAllowBrowser: true // We should move all interactions to a server
-  });
 
   const processUserObjective = async () => {
 
@@ -155,22 +150,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
   const getServerQAndAFromUserObjective = async (userObjective: string) => {
 
-    const body = {
-      objective: userObjective
-    };
-
-    const bodyString = JSON.stringify(body);
-
-    const request = new Request("http://localhost:8080/promptman/process-objective", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: bodyString,
-    });
-
-    const response = await fetch(request);
-    const chatReply = await response.json();
+    const chatReply = await getServerQAndAFromUserObjectiveAsync(userObjective);
     const responseData: CategoryQuestions[] = JSON.parse(chatReply);
 
     console.log(responseData);
