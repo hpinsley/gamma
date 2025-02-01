@@ -7,7 +7,8 @@
     "typescript": "^5.7.3"
   },
   "scripts": {
-    "start-server": "npx nodemon"
+    "start-server": "npx nodemon",
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
