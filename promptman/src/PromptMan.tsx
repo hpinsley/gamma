@@ -150,11 +150,11 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
   const getServerQAndAFromUserObjective = async (userObjective: string) => {
 
-    const chatReply = await getServerQAndAFromUserObjectiveAsync(userObjective);
-    const responseData: CategoryQuestions[] = JSON.parse(chatReply);
+    const responseData:CategoryQuestions[] = await getServerQAndAFromUserObjectiveAsync(userObjective);
 
     console.log(responseData);
 
+    // Convert the response data to the format we need to include our answers
     const qa: CategoryQuestionsAndAnswers[] = responseData.map((category: CategoryQuestions) => {
       return {
         category: category.category,

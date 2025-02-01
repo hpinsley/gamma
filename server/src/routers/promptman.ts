@@ -34,9 +34,13 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
   
       let responseText = response.choices[0].message.content || "";
       // Clean up the response text to remove any extraneous formatting
-      responseText = responseText.replace(/```json/g, '').replace(/```/g, '');
+      responseText = responseText
+                      .replace(/```json/g, '')
+                      .replace(/```/g, '')
+                      .replace(/\n/g, '');
 
       // res.set('Content-Type', 'application/json');
+
       res.json(responseText);  
     }
     catch (error) {

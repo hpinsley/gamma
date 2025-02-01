@@ -1,6 +1,6 @@
-import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, ProcessUserAnswersRequestBody } from '../models/PromptModels';
+import { CategoryQuestions } from '../models/PromptModels';
 
-export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string) => {
+export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string): Promise<CategoryQuestions[]> => {
 
     const body = {
       objective: userObjective
@@ -18,6 +18,8 @@ export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string
 
     const response = await fetch(request);
     const chatReply = await response.json();
-    return chatReply;
+    const categoriesAndQuestions: CategoryQuestions[] = JSON.parse(chatReply);
+
+    return categoriesAndQuestions;
   };
 
