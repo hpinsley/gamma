@@ -29,8 +29,6 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
     // res.json({ message: 'Received objective', objective: objective });
   
     const prompt = generateStagePrompt(objective, [], workflow, WorkflowStage.INITIAL);
-
-
     const client = Utils.getOpenAIClient();
   
     try {
@@ -63,7 +61,6 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
     
     try {
       console.log(`Your initial objective was ${req.body.userObjective}`);
-      console.log(`First category is ${req.body.qa[0].category}`);
 
        const userObjective = req.body.userObjective;
        const qaListByCategory = req.body.qa;
@@ -85,9 +82,6 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
        console.log(`Workflow is ${workflow.id} with ${workflow.steps.length} steps`);
        
        const nextPrompt = generateStagePrompt(userObjective, qaWithEmptyCategoriesRemoved, workflow, WorkflowStage.QUESTIONS_AND_ANSWERS);
-
-      //  const nextPrompt = generateNextPrompt(userObjective, qaWithEmptyCategoriesRemoved, options)
-       
        console.log(nextPrompt);
 
        const client = Utils.getOpenAIClient();
@@ -120,19 +114,6 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
   }
 
   return prompt;
-}
-
-const generateNextPrompt = (userObjective: string, qaWithEmptyCategoriesRemoved: CategoryQuestionsAndAnswers[], options: Options|undefined): string => {
-  // Implement the logic for generating the next prompt based on the filtered QA and options
-      const qaJson = JSON.stringify(qaWithEmptyCategoriesRemoved, null, 2);
-      const prompt = `I originally asked you ${userObjective}
-You asked me some follow-up questions that you felt you needed to provide me with a detailed plan. The entire goal of this is to create the "perfect chatgpt prompt" for the user to copy and paste into chatgpt so they get the best and most helpful response based on their initial objective. 
-Here are questions you asked me and the answers I provided in json format:
-${qaJson}
-With all this information, I'd like you to construct the perfect PROMPT for the user to copy and paste into gpt. Be sure to include somewhere in the prompt, "go back and forth with me until we have generated a response that helps me achieve my goal"
-`;
-
-      return prompt;
 }
 
 export default promptManRouter;
