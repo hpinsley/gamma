@@ -12,7 +12,7 @@ WORKDIR /app
 COPY ./server/package.json ./server/package-lock.json ./server/
 RUN cd server && npm install
 COPY ./server ./server
-RUN cd server && npm run build
+RUN cd server && npm run build-and-copy-data
 
 # Stage 3: Combine the builds and set up the server to serve the client
 FROM node:18
