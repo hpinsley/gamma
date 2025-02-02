@@ -8,11 +8,14 @@
   },
   "scripts": {
     "start-server": "npx nodemon",
-    "build": "tsc"
+    "build": "tsc",
+    "copy-data": "copyfiles -u 1 src/data/**/* dist",
+    "build-and-copy-data": "npm run build && npm run copy-data"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "copyfiles": "^2.4.1",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2"
   }

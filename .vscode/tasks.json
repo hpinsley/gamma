@@ -20,15 +20,13 @@
     		}
 		},
 		{
-			"type": "shell",
+			"type": "npm",
 			"label": "tsc: build server",
-			"command": "tsc",
-			"args": [],
+			"script": "build-and-copy-data",
 			"group": {
 			  "kind": "build",
 			  "isDefault": false
 			},
-			"problemMatcher": ["$tsc"],
 			"options": {
         		"cwd": "${workspaceFolder}/server"
     		}

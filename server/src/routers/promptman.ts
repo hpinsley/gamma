@@ -2,6 +2,8 @@ import express, { Router, Request, Response } from 'express';
 import Utils from '../common/utils';
 import OpenAI from 'openai';
 import { ProcessUserAnswersRequestBody, Options, CategoryQuestionsAndAnswers} from '../models/PromptModels';
+import { getDefaultWorkflow } from '../services/workflow_manager';
+import { Workflow, WorkflowStage } from '../models/workflow/workflow_models';
 
 const promptManRouter = Router();
 
@@ -10,6 +12,13 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
     // Access the 'objective' from the request body
     const { objective } = req.body;
   
+    const workflow = getDefaultWorkflow();
+    if (!workflow) {
+      return res.status(500).json({ error: 'Default workflow not found' });
+    }
+    
+    console.log(`Workflow is ${workflow.id} with ${workflow.steps.length} steps`);
+
     // You should validate the 'objective' variable here
     if (typeof objective !== 'string') {
       // If 'objective' is not a string or not provided, send a 400 Bad Request response
@@ -19,7 +28,7 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
     // Respond with JSON
     // res.json({ message: 'Received objective', objective: objective });
   
-    const prompt = generateInitialPrompt(objective);
+    const prompt = generateInitialPrompt(objective, workflow, WorkflowStage.INITIAL);
 
 
     const client = Utils.getOpenAIClient();
@@ -49,7 +58,7 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
   });
 
   
-  promptManRouter.post('/process-user-answers', async (req: express.Request<{}, {}, ProcessUserAnswersRequestBody>, res:any) => {
+ promptManRouter.post('/process-user-answers', async (req: express.Request<{}, {}, ProcessUserAnswersRequestBody>, res:any) => {
     // Access the 'objective' from the request body
     
     try {
@@ -88,22 +97,14 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
     }
   });
 
-  const generateInitialPrompt = (objective:string): string => {
-  const prompt = `
-  ${objective}
-  What information do you need from me to help you give me the helpful and detailed response to my question?
-  Please format your response as json as a list of questions by category.  Use this format:
-  {
-    "category": "Category Name",
-    "questions": [
-      "Question 1",
-      "Question 2",
-      "Question 3"
-    ]
+ const generateInitialPrompt = (objective:string, workflow: Workflow, stage:WorkflowStage): string => {
+  const relevantStep = workflow.steps.find(step => step.stage === stage);
+  if (!relevantStep) {
+    throw new Error(`No step found for stage ${stage}`);
   }
-    
-  Do not include any additional commentatry or niceties in your response.  Just the json.`;
-  
+
+  const templateString = relevantStep.prompt;
+  const prompt = templateString.replace('${userObjective}', objective);
   return prompt;
 }
 
