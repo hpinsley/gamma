@@ -28,7 +28,7 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
     // Respond with JSON
     // res.json({ message: 'Received objective', objective: objective });
   
-    const prompt = generateInitialPrompt(objective, workflow, WorkflowStage.INITIAL);
+    const prompt = generateStagePrompt(objective, [], workflow, WorkflowStage.INITIAL);
 
 
     const client = Utils.getOpenAIClient();
@@ -77,7 +77,16 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
                 ));
 
        const qaWithEmptyCategoriesRemoved = qaWithNonAnswersRemoved.filter(categoryQuestionsAndAnswers => categoryQuestionsAndAnswers.questionsAndAnswers.length > 0);
-       const nextPrompt = generateNextPrompt(userObjective, qaWithEmptyCategoriesRemoved, options)
+       const workflow = getDefaultWorkflow();
+       if (!workflow) {
+         return res.status(500).json({ error: 'Default workflow not found' });
+       }
+       
+       console.log(`Workflow is ${workflow.id} with ${workflow.steps.length} steps`);
+       
+       const nextPrompt = generateStagePrompt(userObjective, qaWithEmptyCategoriesRemoved, workflow, WorkflowStage.QUESTIONS_AND_ANSWERS);
+
+      //  const nextPrompt = generateNextPrompt(userObjective, qaWithEmptyCategoriesRemoved, options)
        
        console.log(nextPrompt);
 
@@ -97,14 +106,19 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
     }
   });
 
- const generateInitialPrompt = (objective:string, workflow: Workflow, stage:WorkflowStage): string => {
+ const generateStagePrompt = (objective:string, qa: CategoryQuestionsAndAnswers[], workflow: Workflow, stage:WorkflowStage): string => {
   const relevantStep = workflow.steps.find(step => step.stage === stage);
   if (!relevantStep) {
     throw new Error(`No step found for stage ${stage}`);
   }
 
   const templateString = relevantStep.prompt;
-  const prompt = templateString.replace('${userObjective}', objective);
+  let prompt = templateString.replace('${userObjective}', objective);
+  if (qa.length > 0) {
+    const qaJson = JSON.stringify(qa, null, 2);
+    prompt = prompt.replace('${qaJson}', qaJson);
+  }
+
   return prompt;
 }
 
