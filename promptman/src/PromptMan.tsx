@@ -25,7 +25,7 @@ enum FetchState {
 
 const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   // const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
-  const [userObjective, setUserObjective] = React.useState('How can I become a full stack developer?');
+  const [userObjective, setUserObjective] = React.useState('How can I become an interior designer?');
   const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
   const [detailedPlan, setDetailedPlan] = React.useState('');
   const [fetchState, setFetchState] = React.useState<FetchState>(FetchState.NotStarted);

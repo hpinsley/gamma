@@ -11,7 +11,7 @@ let workflows: Workflow[] = [];
 try {
     const rawData = JSON.parse(fs.readFileSync(workflowsFilePath, 'utf-8'));
     defaultWorkflowId = rawData.default;
-    console.log(workflowsData);
+    console.log("Default workflow id:", defaultWorkflowId);
 
     workflows = rawData.workflows.map(
         (workflow: any): Workflow => ({
@@ -23,7 +23,7 @@ try {
             }))
         })
     );
-    console.log(workflows);                            
+    console.log("Read in workflows", workflows);                            
 }
 catch (error) {
     console.error(error);
@@ -32,6 +32,10 @@ catch (error) {
 
 export function getDefaultWorkflowId(): string {
     return defaultWorkflowId;
+}
+
+export function getWorkflows(): Workflow[] {
+    return workflows;
 }
 
 export function getDefaultWorkflow(): Workflow | undefined {
