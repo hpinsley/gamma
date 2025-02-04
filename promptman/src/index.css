@@ -124,3 +124,18 @@ div#status-bar {
   font-family: Arial, sans-serif; /* Set a pleasing font */
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
 }
+
+div#workflows-container {
+  padding: 20px;
+}
+
+p#workflow-caveats {
+  font-size: 14pt;
+  font-style: italic;
+  margin: 10px;
+}
+
+select#workflow-select {
+  font-size: 20pt;
+  padding: 5px;
+}
