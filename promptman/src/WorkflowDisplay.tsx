@@ -16,7 +16,7 @@ const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({ workflow }) => {
     return (
       <tr key={index}>
         <td>
-          <WorkflowStepDisplay indexNo={index} step={step} />
+          <WorkflowStepDisplay key={index} indexNo={index} step={step} />
         </td>
       </tr>
     )

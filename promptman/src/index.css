@@ -179,3 +179,36 @@ div.workflow-step h2 {
 div.workflow-step h3 {
   font-size: 8pt;
 }
+
+nav {
+  background-color: #333; /* Background color for the nav */
+  padding: 10px 20px; /* Padding around the nav */
+}
+
+nav ul {
+  list-style-type: none; /* Remove bullet points */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  display: flex; /* Use flexbox for horizontal layout */
+}
+
+nav li {
+  margin-right: 20px; /* Space between menu items */
+}
+
+nav li:last-child {
+  margin-right: 0; /* Remove margin from the last item */
+}
+
+nav a {
+  color: white; /* Text color */
+  text-decoration: none; /* Remove underline */
+  padding: 10px 15px; /* Padding around the links */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover */
+}
+
+nav a:hover {
+  background-color: #555; /* Background color on hover */
+  color: #fff; /* Text color on hover */
+  border-radius: 5px; /* Rounded corners on hover */
+}
