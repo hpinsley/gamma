@@ -139,3 +139,15 @@ select#workflow-select {
   font-size: 20pt;
   padding: 5px;
 }
+
+div.workflow-step {
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Add padding for better spacing */
+  margin: 10px; /* Add margin for spacing */
+}
+
+div.workflow-step textarea {
+  width: 80vw;
+  height: 300px;
+}

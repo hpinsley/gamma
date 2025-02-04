@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { getDefaultWorkflowIdAsync, getAllWorkflowsAsync } from './services/workflow_service';
 import { Workflow } from './models/WorkflowModels';
+import WorkflowDisplay from './WorkflowDisplay';
 
-
-interface WorkflowProps {
+interface WorkflowsProps {
 }
 
-const Workflows: React.FC<WorkflowProps> = () => {
+const Workflows: React.FC<WorkflowsProps> = () => {
   const [defaultWorkflowId, setDefaultWorkflowId] = React.useState('');
   const [workflowIds, setWorkflowIds] = React.useState<string[]>([]);
   const [selectedWorkflowId, setSelectedWorkflowId] = React.useState<string>('');
@@ -49,7 +49,7 @@ const Workflows: React.FC<WorkflowProps> = () => {
       { workflowIds.map((workflowId) => <option key={workflowId}>{workflowId}</option>) }
       </select>
       <hr/>
-      <span>{selectedWorkflow && selectedWorkflow.id}</span>
+      <WorkflowDisplay workflow={selectedWorkflow} />
     </div>
   );
 
