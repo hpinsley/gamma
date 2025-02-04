@@ -20,3 +20,12 @@ export const getAllWorkflowIdsAsync = async (): Promise<string[]> => {
   return workflowIds;
 };
 
+export const getAllWorkflowsAsync = async (): Promise<Workflow[]> => {
+  const url = `${PROMPTMAN_SERVICE_URL}/workflows`;
+  console.log(`url: ${url}`);
+
+  const response = await fetch(url);
+  const workflows:Workflow[] = await response.json();
+  return workflows;
+};
+
