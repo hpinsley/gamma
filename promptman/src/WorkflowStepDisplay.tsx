@@ -17,8 +17,9 @@ const WorkflowStepDisplay: React.FC<WorkflowStepDisplayProps> = ({ indexNo, step
 
   return (
     <div className="workflow-step">
+      <h1>Step {indexNo + 1}</h1>
       <h2>Description: {step.description}</h2>
-      <h2>Stage: {step.stage}</h2>
+      <h3>Stage: {step.stage}</h3>
       <div>
         <textarea>{cleanStepPrompt(step.prompt)}</textarea>
       </div>

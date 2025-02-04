@@ -140,14 +140,42 @@ select#workflow-select {
   padding: 5px;
 }
 
-div.workflow-step {
-  border: 1px solid #ccc; /* Light gray border */
-  border-radius: 5px; /* Rounded corners */
-  padding: 10px; /* Add padding for better spacing */
-  margin: 10px; /* Add margin for spacing */
+div.workflow-container {
+  padding: 5px;
 }
+
+/* div.workflow-container table td {
+  border: 1px solid blue;
+} */
 
 div.workflow-step textarea {
   width: 80vw;
   height: 300px;
+  padding: 20px;
+}
+
+div.workflow-step {
+  padding: 20px;
+  margin: 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  font-size: 12pt;
+  line-height: 1.5;
+}
+
+div.workflow-step h1,h2,h3 {
+  font-family: cursive;
+}
+
+div.workflow-step h1 {
+  font-size: 12pt;
+}
+div.workflow-step h2 {
+  font-size: 10pt;
+}
+div.workflow-step h3 {
+  font-size: 8pt;
 }
