@@ -40,12 +40,12 @@ const Workflows: React.FC<WorkflowsProps> = () => {
       <h1>Workflows</h1>
       <p>Default Workflow ID: <b>{defaultWorkflowId}</b></p>
       <hr/>
-      <p id="workflow-caveats">Select a workflow to view its definition.  Note that you cannot onChange
-        a workflow definition here.  If we want additional workflows, they have to be added
+      <p id="workflow-caveats">Select a workflow to view its definition.  <b>Note that you cannot change
+        or add a workflow definition here</b>.  If we want additional workflows, they have to be added
         to data/workflow.json for now until we provision some sort of external persistence
         layer.
       </p>
-      <select id="workflow-select" onChange={(e) => selectWorkflow(e.currentTarget.value)} defaultValue={defaultWorkflowId}>
+      <select id="workflow-select" onChange={(e) => selectWorkflow(e.currentTarget.value)} value={selectedWorkflowId}>
       { workflowIds.map((workflowId) => <option key={workflowId}>{workflowId}</option>) }
       </select>
       <hr/>
