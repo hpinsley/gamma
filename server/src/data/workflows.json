@@ -46,7 +46,7 @@
             "id": "workflow-2",
             "steps": [
                 {
-                    "description": "Send initial objective",
+                    "description": "Send initial GOAL",
                     "stage": "INITIAL",
                     "promptLines": [
                         "${userObjective}",

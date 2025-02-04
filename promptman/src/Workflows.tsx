@@ -31,8 +31,8 @@ const Workflows: React.FC<WorkflowsProps> = () => {
 
   const selectWorkflow = (workflowId:string) : void => {
     setSelectedWorkflowId(workflowId);
-    const selectedWorkflow = workflows.find((workflow) => workflow.id === workflowId);
-    setSelectedWorkflow(selectedWorkflow);
+    const workflow = workflows.find((workflow) => workflow.id === workflowId);
+    setSelectedWorkflow(workflow);
   }
 
   return (
