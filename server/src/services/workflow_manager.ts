@@ -34,6 +34,16 @@ export function getDefaultWorkflowId(): string {
     return defaultWorkflowId;
 }
 
+export function setDefaultWorkflowId(workflowId:string): boolean {
+    const newDefaultWorkflow = find_workflow_by_id(workflowId);
+    
+    if (newDefaultWorkflow) {
+        defaultWorkflowId = workflowId;
+        return true;
+    }
+    return false;
+}
+
 export function getWorkflows(): Workflow[] {
     return workflows;
 }
