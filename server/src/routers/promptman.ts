@@ -1,14 +1,15 @@
 import express, { Router, Request, Response } from 'express';
 import Utils from '../common/utils';
-import OpenAI from 'openai';
-import { ProcessUserAnswersRequestBody, Options, CategoryQuestionsAndAnswers, CategoryQuestions} from '../models/PromptModels';
+import { InitialPromptRequest, PromptResponse, ProcessUserAnswersRequestBody, Options, CategoryQuestionsAndAnswers, CategoryQuestions} from '../models/PromptModels';
 import { getDefaultWorkflow } from '../services/workflow_manager';
 import { Workflow, WorkflowStage } from '../models/workflow/workflow_models';
 
 const promptManRouter = Router();
 
+promptManRouter.post('/process-objective', async (
+      req: express.Request<ResBody=PromptResponse, ReqBody=InitialPromptRequest>, 
+      res: any) => {
 
-promptManRouter.post('/process-objective', async (req:any, res:any) => {
     // Access the 'objective' from the request body
     const { objective } = req.body;
   
@@ -45,8 +46,16 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
                       .replace(/\n/g, '');
 
       // res.set('Content-Type', 'application/json');
-      const parsed:CategoryQuestions[] = JSON.parse(responseText)
-      res.json(parsed);  
+      const categoryQuestions:CategoryQuestions[] = JSON.parse(responseText);
+      
+      const response : PromptResponse = {
+        userObjective: objective,
+        currentStage: WorkflowStage.INITIAL,
+        stepIndex: 0,
+        categoryQuesions: categoryQuestions
+      };
+      
+      res.json(response);  
     }
     catch (error) {
 
