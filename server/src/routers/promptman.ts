@@ -1,7 +1,7 @@
 import express, { Router, Request, Response } from 'express';
 import Utils from '../common/utils';
 import OpenAI from 'openai';
-import { ProcessUserAnswersRequestBody, Options, CategoryQuestionsAndAnswers} from '../models/PromptModels';
+import { ProcessUserAnswersRequestBody, Options, CategoryQuestionsAndAnswers, CategoryQuestions} from '../models/PromptModels';
 import { getDefaultWorkflow } from '../services/workflow_manager';
 import { Workflow, WorkflowStage } from '../models/workflow/workflow_models';
 
@@ -45,8 +45,8 @@ promptManRouter.post('/process-objective', async (req:any, res:any) => {
                       .replace(/\n/g, '');
 
       // res.set('Content-Type', 'application/json');
-
-      res.json(responseText);  
+      const parsed:CategoryQuestions[] = JSON.parse(responseText)
+      res.json(parsed);  
     }
     catch (error) {
 

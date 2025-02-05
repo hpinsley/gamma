@@ -21,9 +21,7 @@ export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string
     });
 
     const response = await fetch(request);
-    const chatReply = await response.json();
-    const categoriesAndQuestions: CategoryQuestions[] = JSON.parse(chatReply);
-
+    const categoriesAndQuestions: CategoryQuestions[] = await response.json();
     return categoriesAndQuestions;
   };
 
