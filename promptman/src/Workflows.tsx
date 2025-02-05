@@ -49,7 +49,9 @@ const Workflows: React.FC<WorkflowsProps> = () => {
       { workflowIds.map((workflowId) => <option key={workflowId}>{workflowId}</option>) }
       </select>
       <hr/>
-      <WorkflowDisplay workflow={selectedWorkflow} />
+      <WorkflowDisplay 
+        isDefault={selectedWorkflow != undefined && defaultWorkflowId === selectedWorkflow.id} 
+        workflow={selectedWorkflow} />
     </div>
   );
 

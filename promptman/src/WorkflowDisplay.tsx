@@ -3,10 +3,11 @@ import { Workflow, WorkflowStep } from './models/WorkflowModels';
 import WorkflowStepDisplay from './WorkflowStepDisplay';
 
 interface WorkflowDisplayProps {
-  workflow?: Workflow
+  workflow?: Workflow;
+  isDefault: boolean;
 }
 
-const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({ workflow }) => {
+const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({ isDefault, workflow }) => {
 
   if (!workflow) {
     return null;
@@ -24,7 +25,10 @@ const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({ workflow }) => {
 
   return (
     <div className="workflow-container">
-      <h1>{workflow.id}</h1>
+      <h1>
+        {workflow.id}
+        {!isDefault && (<button className="set-as-default">Set as Default</button>)}
+      </h1>
       <table>
         <tbody>
           {   workflow.steps.map((step, index) => displayStep(index, step)) }
