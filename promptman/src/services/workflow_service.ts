@@ -29,3 +29,8 @@ export const getAllWorkflowsAsync = async (): Promise<Workflow[]> => {
   return workflows;
 };
 
+export const setDefaultWorkflowIdAsync = async (workflowId: string): Promise<void> => {
+    const url = `${PROMPTMAN_SERVICE_URL}/workflows/default-workflow/id/${workflowId}`;
+    const response = await fetch(url, { method: 'POST' });
+    console.log("setDefaultWorkflow response", response.status);
+}

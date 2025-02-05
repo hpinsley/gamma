@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { getDefaultWorkflowIdAsync, getAllWorkflowsAsync } from './services/workflow_service';
+import { getDefaultWorkflowIdAsync, getAllWorkflowsAsync, setDefaultWorkflowIdAsync } from './services/workflow_service';
 import { Workflow } from './models/WorkflowModels';
 import WorkflowDisplay from './WorkflowDisplay';
 
@@ -29,6 +29,17 @@ const Workflows: React.FC<WorkflowsProps> = () => {
           });
   }, []);
 
+  const changeDefaultWorkflow = async (workflowId:string) : Promise<void> => {
+    const selectedWorkflow = workflows.find((workflow) => workflow.id === workflowId);
+    if (selectedWorkflow)
+    {
+      await setDefaultWorkflowIdAsync(workflowId);
+      setDefaultWorkflowId(workflowId);
+      setSelectedWorkflow(selectedWorkflow);
+      setSelectedWorkflowId(workflowId);
+    }
+  }
+
   const selectWorkflow = (workflowId:string) : void => {
     setSelectedWorkflowId(workflowId);
     const workflow = workflows.find((workflow) => workflow.id === workflowId);
@@ -50,7 +61,7 @@ const Workflows: React.FC<WorkflowsProps> = () => {
       </select>
       <hr/>
       <WorkflowDisplay 
-        setAsDefault={(workflowId) => alert(workflowId)}
+        setAsDefault={changeDefaultWorkflow}
         isDefault={selectedWorkflow !== undefined && defaultWorkflowId === selectedWorkflow.id} 
         workflow={selectedWorkflow} />
     </div>

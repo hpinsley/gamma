@@ -35,6 +35,7 @@ export function getDefaultWorkflowId(): string {
 }
 
 export function setDefaultWorkflowId(workflowId:string): boolean {
+    console.log(`Setting default workflow id to ${workflowId}`);
     const newDefaultWorkflow = find_workflow_by_id(workflowId);
     
     if (newDefaultWorkflow) {
