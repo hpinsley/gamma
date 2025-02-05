@@ -8,8 +8,6 @@ interface WorkflowsProps {
 
 const Workflows: React.FC<WorkflowsProps> = () => {
   const [defaultWorkflowId, setDefaultWorkflowId] = React.useState('');
-  const [workflowIds, setWorkflowIds] = React.useState<string[]>([]);
-  const [selectedWorkflowId, setSelectedWorkflowId] = React.useState<string>('');
   const [workflows, setWorkflows] = React.useState<Workflow[]>([]);
   const [selectedWorkflow, setSelectedWorkflow] = React.useState<Workflow | undefined>(undefined);
 
@@ -19,10 +17,7 @@ const Workflows: React.FC<WorkflowsProps> = () => {
           setDefaultWorkflowId(defaultWorkflowId)
           getAllWorkflowsAsync()
                 .then((workflows) => {
-                    const workflowIds = workflows.map(w => w.id);
-                    setWorkflowIds(workflowIds);
                     setWorkflows(workflows)
-                    setSelectedWorkflowId(defaultWorkflowId);
                     const selectedWorkflow = workflows.find((workflow) => workflow.id === defaultWorkflowId);
                     setSelectedWorkflow(selectedWorkflow);
                 });
@@ -36,14 +31,24 @@ const Workflows: React.FC<WorkflowsProps> = () => {
       await setDefaultWorkflowIdAsync(workflowId);
       setDefaultWorkflowId(workflowId);
       setSelectedWorkflow(selectedWorkflow);
-      setSelectedWorkflowId(workflowId);
     }
   }
 
   const selectWorkflow = (workflowId:string) : void => {
-    setSelectedWorkflowId(workflowId);
     const workflow = workflows.find((workflow) => workflow.id === workflowId);
     setSelectedWorkflow(workflow);
+  }
+
+  const showDropdownList = () => {
+    if (!selectedWorkflow) {
+      return null;
+    }
+
+    return (
+      <select id="workflow-select" onChange={(e) => selectWorkflow(e.currentTarget.value)} value={selectedWorkflow.id}>
+      { workflows.map((workflow) => <option key={workflow.id}>{workflow.id}</option>) }
+      </select>
+    );
   }
 
   return (
@@ -56,9 +61,7 @@ const Workflows: React.FC<WorkflowsProps> = () => {
         to data/workflow.json for now until we provision some sort of external persistence
         layer.
       </p>
-      <select id="workflow-select" onChange={(e) => selectWorkflow(e.currentTarget.value)} value={selectedWorkflowId}>
-      { workflowIds.map((workflowId) => <option key={workflowId}>{workflowId}</option>) }
-      </select>
+      { showDropdownList() }
       <hr/>
       <WorkflowDisplay 
         setAsDefault={changeDefaultWorkflow}
