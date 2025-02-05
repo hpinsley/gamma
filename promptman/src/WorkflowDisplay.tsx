@@ -5,9 +5,10 @@ import WorkflowStepDisplay from './WorkflowStepDisplay';
 interface WorkflowDisplayProps {
   workflow?: Workflow;
   isDefault: boolean;
+  setAsDefault: (workflowId: string) => void;
 }
 
-const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({ isDefault, workflow }) => {
+const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({ isDefault, workflow, setAsDefault }) => {
 
   if (!workflow) {
     return null;
@@ -27,7 +28,7 @@ const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({ isDefault, workflow }
     <div className="workflow-container">
       <h1>
         {workflow.id}
-        {!isDefault && (<button className="set-as-default">Set as Default</button>)}
+        {!isDefault && (<button className="set-as-default" onClick={() => setAsDefault(workflow.id)}>Set as Default</button>)}
       </h1>
       <table>
         <tbody>

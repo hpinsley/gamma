@@ -50,7 +50,8 @@ const Workflows: React.FC<WorkflowsProps> = () => {
       </select>
       <hr/>
       <WorkflowDisplay 
-        isDefault={selectedWorkflow != undefined && defaultWorkflowId === selectedWorkflow.id} 
+        setAsDefault={(workflowId) => alert(workflowId)}
+        isDefault={selectedWorkflow !== undefined && defaultWorkflowId === selectedWorkflow.id} 
         workflow={selectedWorkflow} />
     </div>
   );
