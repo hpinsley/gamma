@@ -50,8 +50,8 @@ promptManRouter.post('/process-objective', async (
       
       const promptResponse : PromptResponse = {
         userObjective: objective,
-        currentStage: WorkflowStage.INITIAL,
-        stepIndex: 0,
+        nextStage: WorkflowStage.QUESTIONS_AND_ANSWERS,
+        nextStepIndex: 1,   // Step index 0 is reserved for the initial question
         categoryQuesions: categoryQuestions
       };
       

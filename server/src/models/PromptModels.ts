@@ -31,7 +31,7 @@ export interface InitialPromptRequest {
 
 export interface PromptResponse {
     userObjective: string;
-    currentStage: WorkflowStage;
-    stepIndex: number;
+    nextStage: WorkflowStage;
+    nextStepIndex: number;
     categoryQuesions: CategoryQuestions[]     
 }

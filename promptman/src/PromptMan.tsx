@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 
 import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, Options } from './models/PromptModels';
 import {getServerQAndAFromUserObjectiveAsync, submitUserAnswersToInitialQuestionsAsync} from './services/promptman_service';
+import { WorkflowStage } from './models/WorkflowModels';
 
 interface PromptManProps {
   onDetailPlanGenerated?: (question: string, detailedPlan: string) => any;
@@ -26,6 +27,7 @@ enum FetchState {
 const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   // const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
   const [userObjective, setUserObjective] = React.useState('How can I become an interior designer?');
+  const [nextStage, setNextStage] = React.useState<WorkflowStage>(WorkflowStage.INITIAL);
   const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
   const [detailedPlan, setDetailedPlan] = React.useState('');
   const [fetchState, setFetchState] = React.useState<FetchState>(FetchState.NotStarted);
@@ -154,6 +156,8 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
     console.log(responseData);
 
+    setNextStage(responseData.nextStage);
+
     // Convert the response data to the format we need to include our answers
     const qa: CategoryQuestionsAndAnswers[] = responseData.categoryQuesions.map((category: CategoryQuestions) => {
       return {
@@ -205,6 +209,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     setUserObjective('');
     setCategoryQuestionsAndAnswers([]);
     setDetailedPlan('');
+    setNextStage(WorkflowStage.INITIAL);
     setFetchState(FetchState.NotStarted);
     setPromptState(PromptState.NeedInitialQuestion);
     setErrorMsg('');
@@ -271,6 +276,14 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     )
   };
 
+  const renderCurrentServerState = () => {
+    return (
+      <div>
+        Next Stage: {nextStage}
+      </div>
+    );
+  }
+
   const renderQuestionsAndAnswers = () => {
     if (promptState === PromptState.NeedInitialQuestion ||
       promptState === PromptState.FetchingInitialResponse ||
@@ -293,6 +306,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   return (
     <div>
       {renderQuestionInput()}
+      {renderCurrentServerState()}
       {renderQuestionsAndAnswers()}
       {displayDetailedPlan()}
       {renderStatusBar()}
