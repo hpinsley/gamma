@@ -7,11 +7,11 @@ import { Workflow, WorkflowStage } from '../models/workflow/workflow_models';
 const promptManRouter = Router();
 
 promptManRouter.post('/process-objective', async (
-      req: express.Request<ResBody=PromptResponse, ReqBody=InitialPromptRequest>, 
+      req: express.Request<{}, PromptResponse,InitialPromptRequest>, 
       res: any) => {
 
     // Access the 'objective' from the request body
-    const { objective } = req.body;
+    const objective = req.body.objective
   
     const workflow = getDefaultWorkflow();
     if (!workflow) {
@@ -48,14 +48,14 @@ promptManRouter.post('/process-objective', async (
       // res.set('Content-Type', 'application/json');
       const categoryQuestions:CategoryQuestions[] = JSON.parse(responseText);
       
-      const response : PromptResponse = {
+      const promptResponse : PromptResponse = {
         userObjective: objective,
         currentStage: WorkflowStage.INITIAL,
         stepIndex: 0,
         categoryQuesions: categoryQuestions
       };
       
-      res.json(response);  
+      res.json(promptResponse);  
     }
     catch (error) {
 

@@ -1,9 +1,9 @@
-import { CategoryQuestions, CategoryQuestionsAndAnswers, ProcessUserAnswersRequestBody, Options } from '../models/PromptModels';
+import { InitialPromptRequest, PromptResponse, CategoryQuestions, CategoryQuestionsAndAnswers, ProcessUserAnswersRequestBody, Options } from '../models/PromptModels';
 import { PROMPTMAN_SERVICE_URL } from '../config';
 
 export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string): Promise<CategoryQuestions[]> => {
 
-    const body = {
+    const body: InitialPromptRequest = {
       objective: userObjective
     };
 
@@ -21,8 +21,8 @@ export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string
     });
 
     const response = await fetch(request);
-    const categoriesAndQuestions: CategoryQuestions[] = await response.json();
-    return categoriesAndQuestions;
+    const responseModel: PromptResponse = await response.json();
+    return responseModel.categoryQuesions;
   };
 
 
