@@ -1,121 +1,183 @@
 import express, { Router, Request, Response } from 'express';
 import Utils from '../common/utils';
-import { InitialPromptRequest, PromptResponse, ProcessUserAnswersRequestBody, Options, CategoryQuestionsAndAnswers, CategoryQuestions} from '../models/PromptModels';
+import { ExecuteStepRequest, InitialPromptRequest, ExecuteStepResponse, ProcessUserAnswersRequestBody, Options, CategoryQuestionsAndAnswers, CategoryQuestions } from '../models/PromptModels';
 import { getDefaultWorkflow } from '../services/workflow_manager';
-import { Workflow, WorkflowStage } from '../models/workflow/workflow_models';
+import { Workflow, WorkflowStage, WorkflowStep } from '../models/workflow/workflow_models';
 
 const promptManRouter = Router();
 
-promptManRouter.post('/process-objective', async (
-      req: express.Request<{}, PromptResponse,InitialPromptRequest>, 
-      res: any) => {
+promptManRouter.post('/process-step', async (req: express.Request<{}, ExecuteStepResponse, ExecuteStepRequest>,
+  res: any) => {
 
-    // Access the 'objective' from the request body
-    const objective = req.body.objective
-  
-    const workflow = getDefaultWorkflow();
-    if (!workflow) {
-      return res.status(500).json({ error: 'Default workflow not found' });
-    }
-    
-    console.log(`Workflow is ${workflow.id} with ${workflow.steps.length} steps`);
+  const request = req.body;
 
-    // You should validate the 'objective' variable here
-    if (typeof objective !== 'string') {
-      // If 'objective' is not a string or not provided, send a 400 Bad Request response
-      return res.status(400).json({ error: 'Objective must be a string' });
-    }
-  
-    // Respond with JSON
-    // res.json({ message: 'Received objective', objective: objective });
-  
-    const prompt = generateStagePrompt(objective, [], workflow, WorkflowStage.INITIAL);
-    const client = Utils.getOpenAIClient();
-  
-    try {
-      const response = await client.chat.completions.create({
-        messages: [{ role: 'user', content: prompt }],
-        model: 'gpt-4o',
-       });
-  
-      let responseText = response.choices[0].message.content || "";
-      // Clean up the response text to remove any extraneous formatting
-      responseText = responseText
-                      .replace(/```json/g, '')
-                      .replace(/```/g, '')
-                      .replace(/\n/g, '');
+  const userObjective = request.userObjective;
 
-      // res.set('Content-Type', 'application/json');
-      const categoryQuestions:CategoryQuestions[] = JSON.parse(responseText);
-      
-      const promptResponse : PromptResponse = {
-        userObjective: objective,
-        nextStage: WorkflowStage.QUESTIONS_AND_ANSWERS,
-        nextStepIndex: 1,   // Step index 0 is reserved for the initial question
-        categoryQuesions: categoryQuestions
-      };
-      
-      res.json(promptResponse);  
-    }
-    catch (error) {
-
-      console.error(error);
-      res.json(error);
-    }
-  });
-
-  
- promptManRouter.post('/process-user-answers', async (req: express.Request<{}, {}, ProcessUserAnswersRequestBody>, res:any) => {
-    // Access the 'objective' from the request body
-    
-    try {
-      console.log(`Your initial objective was ${req.body.userObjective}`);
-
-       const userObjective = req.body.userObjective;
-       const qaListByCategory = req.body.qa;
-       const options = req.body.options;
-
-       const qaWithNonAnswersRemoved = qaListByCategory.map(categoryQuestionsAndAnswers => (
-              {...categoryQuestionsAndAnswers,
-                  questionsAndAnswers: 
-                    categoryQuestionsAndAnswers.questionsAndAnswers.filter(qa => qa.answer)
-                  }
-                ));
-
-       const qaWithEmptyCategoriesRemoved = qaWithNonAnswersRemoved.filter(categoryQuestionsAndAnswers => categoryQuestionsAndAnswers.questionsAndAnswers.length > 0);
-       const workflow = getDefaultWorkflow();
-       if (!workflow) {
-         return res.status(500).json({ error: 'Default workflow not found' });
-       }
-       
-       console.log(`Workflow is ${workflow.id} with ${workflow.steps.length} steps`);
-       
-       const nextPrompt = generateStagePrompt(userObjective, qaWithEmptyCategoriesRemoved, workflow, WorkflowStage.QUESTIONS_AND_ANSWERS);
-       console.log(nextPrompt);
-
-       const client = Utils.getOpenAIClient();
-  
-      const response = await client.chat.completions.create({
-          messages: [{ role: 'user', content: nextPrompt }],
-          model: 'gpt-4o',
-        });
-        console.log(response);
-      let responseText = response.choices[0].message.content || "";
-      res.send(responseText);
-    }
-    catch (error) {
-      console.error(error);
-      res.json(error);
-    }
-  });
-
- const generateStagePrompt = (objective:string, qa: CategoryQuestionsAndAnswers[], workflow: Workflow, stage:WorkflowStage): string => {
-  const relevantStep = workflow.steps.find(step => step.stage === stage);
-  if (!relevantStep) {
-    throw new Error(`No step found for stage ${stage}`);
+  const workflow = getDefaultWorkflow();
+  if (!workflow) {
+    return res.status(500).json({ error: 'Default workflow not found' });
   }
 
-  const templateString = relevantStep.prompt;
+  console.log(`Workflow is ${workflow.id} with ${workflow.steps.length} steps`);
+  console.log(`The user's objective is "${userObjective}"`);
+
+  const currentStep = request.stepToExecute;
+  if (currentStep < 0 || currentStep > workflow.steps.length - 1) {
+    return res.status(400).json({ error: `Invalid step index.  Acceptable values are 0..${workflow.steps.length - 1} for workflow ${workflow.id}` });
+  }
+
+  const workflowStep = workflow.steps[currentStep];
+  console.log(`Step ${currentStep} is stage ${workflowStep.stage} - ${workflowStep.description}`);
+
+  const prompt = generateStagePrompt(userObjective, [], workflow, workflowStep);
+  const client = Utils.getOpenAIClient();
+
+  try {
+    const aiResponse = await client.chat.completions.create({
+      messages: [{ role: 'user', content: prompt }],
+      model: 'gpt-4o',
+    });
+
+    let responseText = aiResponse.choices[0].message.content || "";
+
+    console.log('Initial prompt response before cleaning:', responseText);
+
+    // Clean up the response text to remove any extraneous formatting
+    responseText = responseText
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .replace(/\n/g, '');
+
+    // res.set('Content-Type', 'application/json');
+    const categoryQuestions: CategoryQuestions[] = JSON.parse(responseText);
+
+    const response: ExecuteStepResponse = {
+      userObjective: userObjective,
+      stage: workflowStep.stage,
+      categoryQuesions: categoryQuestions
+    };
+
+    res.json(response);
+  }
+  catch (error) {
+    console.error(error);
+    res.json(error);
+  }
+});
+
+
+// promptManRouter.post('/process-objective', async (
+//       req: express.Request<{}, ExecuteStepResponse,InitialPromptRequest>, 
+//       res: any) => {
+
+//     // Access the 'objective' from the request body
+//     const objective = req.body.objective
+
+//     const workflow = getDefaultWorkflow();
+//     if (!workflow) {
+//       return res.status(500).json({ error: 'Default workflow not found' });
+//     }
+
+//     console.log(`Workflow is ${workflow.id} with ${workflow.steps.length} steps`);
+
+//     // You should validate the 'objective' variable here
+//     if (typeof objective !== 'string') {
+//       // If 'objective' is not a string or not provided, send a 400 Bad Request response
+//       return res.status(400).json({ error: 'Objective must be a string' });
+//     }
+
+//     // Respond with JSON
+//     // res.json({ message: 'Received objective', objective: objective });
+
+//     const prompt = generateStagePrompt(objective, [], workflow, WorkflowStage.INITIAL);
+//     const client = Utils.getOpenAIClient();
+
+//     try {
+//       const response = await client.chat.completions.create({
+//         messages: [{ role: 'user', content: prompt }],
+//         model: 'gpt-4o',
+//        });
+
+//       let responseText = response.choices[0].message.content || "";
+
+//       console.log('Initial prompt response before cleaning:', responseText);
+
+//       // Clean up the response text to remove any extraneous formatting
+//       responseText = responseText
+//                       .replace(/```json/g, '')
+//                       .replace(/```/g, '')
+//                       .replace(/\n/g, '');
+
+//       // res.set('Content-Type', 'application/json');
+//       const categoryQuestions:CategoryQuestions[] = JSON.parse(responseText);
+
+//       const promptResponse : ExecuteStepResponse = {
+//         userObjective: objective,
+//         stage: WorkflowStage.QUESTIONS_AND_ANSWERS,
+//         nextStepIndex: 1,   // Step index 0 is reserved for the initial question
+//         categoryQuesions: categoryQuestions
+//       };
+
+//       res.json(promptResponse);  
+//     }
+//     catch (error) {
+
+//       console.error(error);
+//       res.json(error);
+//     }
+//   });
+
+
+// promptManRouter.post('/process-user-answers', async (req: express.Request<{}, {}, ProcessUserAnswersRequestBody>, res: any) => {
+//   // Access the 'objective' from the request body
+
+//   try {
+//     console.log(`Your initial objective was ${req.body.userObjective}`);
+
+//     const userObjective = req.body.userObjective;
+//     const qaListByCategory = req.body.qa;
+//     const options = req.body.options;
+
+//     const qaWithNonAnswersRemoved = qaListByCategory.map(categoryQuestionsAndAnswers => (
+//       {
+//         ...categoryQuestionsAndAnswers,
+//         questionsAndAnswers:
+//           categoryQuestionsAndAnswers.questionsAndAnswers.filter(qa => qa.answer)
+//       }
+//     ));
+
+//     const qaWithEmptyCategoriesRemoved = qaWithNonAnswersRemoved.filter(categoryQuestionsAndAnswers => categoryQuestionsAndAnswers.questionsAndAnswers.length > 0);
+//     const workflow = getDefaultWorkflow();
+//     if (!workflow) {
+//       return res.status(500).json({ error: 'Default workflow not found' });
+//     }
+
+//     console.log(`Workflow is ${workflow.id} with ${workflow.steps.length} steps`);
+
+//     const nextPrompt = generateStagePrompt(userObjective, qaWithEmptyCategoriesRemoved, workflow, WorkflowStage.QUESTIONS_AND_ANSWERS);
+//     console.log(nextPrompt);
+
+//     const client = Utils.getOpenAIClient();
+
+//     const response = await client.chat.completions.create({
+//       messages: [{ role: 'user', content: nextPrompt }],
+//       model: 'gpt-4o',
+//     });
+//     console.log(response);
+//     let responseText = response.choices[0].message.content || "";
+//     res.send(responseText);
+//   }
+//   catch (error) {
+//     console.error(error);
+//     res.json(error);
+//   }
+// });
+
+const generateStagePrompt = (objective: string, qa: CategoryQuestionsAndAnswers[], workflow: Workflow, step: WorkflowStep): string => {
+
+  const templateString = step.prompt;
+  console.log(`Template string is ${templateString}`);
+
   let prompt = templateString.replace('${userObjective}', objective);
   if (qa.length > 0) {
     const qaJson = JSON.stringify(qa, null, 2);

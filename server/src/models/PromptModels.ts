@@ -29,9 +29,17 @@ export interface InitialPromptRequest {
     objective: string;
 }
 
-export interface PromptResponse {
+export interface ExecuteStepRequest {
+    userObjective: string; // or the appropriate type
+    stepToExecute: number;
+    qa?: CategoryQuestionsAndAnswers[];
+    options?: Options | undefined;
+}
+
+export interface ExecuteStepResponse {
     userObjective: string;
-    nextStage: WorkflowStage;
-    nextStepIndex: number;
-    categoryQuesions: CategoryQuestions[]     
+    stage: WorkflowStage;
+    nextStepIndex?: number;
+    categoryQuesions?: CategoryQuestions[]
+    finalPompt?: string;     
 }
