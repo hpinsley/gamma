@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Workflow, WorkflowStep } from '../../../models/WorkflowModels';
+import WorflowStepEdit from './WorkflowStepEdit'
 
 interface WorkflowEditProps {
   workflowId: string;
@@ -23,6 +24,16 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     routeToWorkflows();
   }
 
+  const displayStep = (index:number, step:WorkflowStep) => {
+    return (
+      <tr key={index}>
+        <td>
+          <WorflowStepEdit key={index} indexNo={index} step={step} />
+        </td>
+      </tr>
+    )
+  }
+
   const displayButtons = () => (
     <div>
       <button id="save-workflow-edits" onClick={onSave}>Save</button>
@@ -34,12 +45,18 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     return null;
   }
 
+  
   return (
     <div className="workflow-edit-container">
       <h1>
         Editing {workflowId}
       </h1>
-      { displayButtons() }
+      <table>
+        <tbody>
+          {   workflow.steps.map((step, index) => displayStep(index, step)) }
+        </tbody>
+      </table>
+    { displayButtons() }
     </div>
   );
 };
