@@ -33,11 +33,25 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     routeToWorkflows();
   }
 
+  const updateWorkflowStep = (index: number, updatedWorkflowStep: WorkflowStep) => {
+    if (!workflow) {
+      console.error("No workflow is defined in updateWorkflowStep")
+      return;
+    }
+
+    console.log("updating");
+    const updatedWorkflow:Workflow = {...workflow, 
+        steps: workflow.steps.map((step, stepIndex) => (stepIndex === index) ? updatedWorkflowStep : step)
+    }
+    
+    setWorkflow(updatedWorkflow)
+  }
+
   const displayStep = (index:number, step:WorkflowStep) => {
     return (
       <tr key={index}>
         <td>
-          <WorflowStepEdit key={index} indexNo={index} step={step} />
+          <WorflowStepEdit key={index} indexNo={index} step={step} onStepChange={(updatedStep:WorkflowStep) => updateWorkflowStep(index, updatedStep)} />
         </td>
       </tr>
     )
@@ -45,7 +59,7 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
 
   const displayButtons = () => (
     <div>
-      <button id="save-workflow-edits" onClick={onSave}>Save</button>
+      <button id="save-workflow-edits" onClick={onSave}>Save Workflow</button>
       <button id="cancel-workflow-edits" onClick={onCancel}>Cancel</button>
     </div>
   )
