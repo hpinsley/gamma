@@ -12,6 +12,14 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [description, setDescription] = useState<string>(step.description);
+  const [prompt, setPrompt] = useState<string>(step.prompt)
+
+  const cleanStepPrompt = (prompt:string) : React.JSX.Element => {
+    const lines = prompt.split('\n');
+    const elements = lines.map(line => (<div><span>{line}</span></div>))
+    const result = (<div>{elements}</div>)
+    return result;
+  }
 
   const normalDisplay = () => {
     return (
@@ -21,14 +29,14 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
         <h2>Description: {step.description}</h2>
         <h3>Stage: {step.stage}</h3>
         <div>
-          <p>{step.prompt}</p>
+          <p>{cleanStepPrompt(step.prompt)}</p>
         </div>
       </div>
     );
   }
 
   const onSaveStepEdits = () => {
-    const updatedWorkflow = { ...step, description: description }
+    const updatedWorkflow = { ...step, description: description, prompt: prompt }
     onStepChange(updatedWorkflow);
     setIsEditing(false);
   }
@@ -53,7 +61,7 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
         </h2>
         <h3>Stage: {step.stage}</h3>
         <div>
-          <p>{step.prompt}</p>
+          <textarea value={prompt} onChange={ev => setPrompt(ev.target.value)} />
         </div>
         {displayEditDispositionButtons()}
       </div>

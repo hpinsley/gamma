@@ -148,10 +148,15 @@ div.workflow-container {
   border: 1px solid blue;
 } */
 
-div.workflow-step textarea {
+div.workflow-edit-step textarea {
+  font-size: 14pt;
+  font-family: Arial, sans-serif;
+  color: blue;
+  overflow-y: scroll;
   width: 80vw;
   height: 300px;
   padding: 20px;
+  border: 5px solid red;
 }
 
 div.workflow-step {
