@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Route, Routes, Link, useParams } from 'react-r
 
 // import logo from './logo.svg';
 import './App.css';
-import PromptMan from './PromptMan';
-import Workflows from './Workflows';
-import WorkflowEdit from './WorkflowEdit';
+import PromptMan from './components/prompt-gen/PromptMan';
+import Workflows from './components/workflows/Workflows';
+import WorkflowEdit from './components/workflows/workflow-edit/WorkflowEdit';
 
 function App() {
   

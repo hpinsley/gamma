@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Workflow, WorkflowStep } from '../../../models/WorkflowModels';
 
 interface WorkflowEditProps {
   workflowId: string;

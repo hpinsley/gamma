@@ -1,5 +1,5 @@
 import React from 'react';
-import { Workflow, WorkflowStep } from './models/WorkflowModels';
+import { Workflow, WorkflowStep } from '../../../models/WorkflowModels';
 import WorkflowStepDisplay from './WorkflowStepDisplay';
 
 interface WorkflowDisplayProps {

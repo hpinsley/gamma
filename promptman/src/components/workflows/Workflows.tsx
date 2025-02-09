@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { getDefaultWorkflowIdAsync, getAllWorkflowsAsync, setDefaultWorkflowIdAsync } from './services/workflow_service';
-import { Workflow } from './models/WorkflowModels';
-import WorkflowDisplay from './WorkflowDisplay';
+import { getDefaultWorkflowIdAsync, getAllWorkflowsAsync, setDefaultWorkflowIdAsync } from '../../services/workflow_service';
+import { Workflow } from '../../models/WorkflowModels';
+import WorkflowDisplay from './workflow-display/WorkflowDisplay';
 import { useNavigate } from 'react-router-dom';
 
 interface WorkflowsProps {

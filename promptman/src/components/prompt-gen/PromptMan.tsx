@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import { ExecuteStepResponse, CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, Options } from './models/PromptModels';
-import {getServerQAndAFromUserObjectiveAsync, submitUserAnswersAsync} from './services/promptman_service';
-import { WorkflowStage } from './models/WorkflowModels';
-import { mapCategoryQuestions } from './common/utils';
+import { ExecuteStepResponse, CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, Options } from '../../models/PromptModels';
+import {getServerQAndAFromUserObjectiveAsync, submitUserAnswersAsync} from '../../services/promptman_service';
+import { WorkflowStage } from '../../models/WorkflowModels';
+import { mapCategoryQuestions } from '../../common/utils';
 
 interface PromptManProps {
   onDetailPlanGenerated?: (question: string, detailedPlan: string) => any;
