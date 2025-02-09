@@ -2,7 +2,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import { ExecuteStepResponse, CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, Options } from './models/PromptModels';
-import {getServerQAndAFromUserObjectiveAsync, submitUserAnswersToInitialQuestionsAsync} from './services/promptman_service';
+import {getServerQAndAFromUserObjectiveAsync, submitUserAnswersAsync} from './services/promptman_service';
 import { WorkflowStage } from './models/WorkflowModels';
 import { mapCategoryQuestions } from './common/utils';
 
@@ -28,7 +28,8 @@ enum FetchState {
 const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   // const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
   const [userObjective, setUserObjective] = React.useState('How can I become an interior designer?');
-  const [nextStage, setNextStage] = React.useState<WorkflowStage>(WorkflowStage.INITIAL);
+  const [workflowStage, setWorkflowStage] = React.useState<WorkflowStage>(WorkflowStage.INITIAL);
+  const [nextStepIndex, setNextStepIndex] = React.useState<number|undefined>(undefined);
   const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
   const [detailedPlan, setDetailedPlan] = React.useState('');
   const [fetchState, setFetchState] = React.useState<FetchState>(FetchState.NotStarted);
@@ -115,7 +116,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
         </ul>
         <div>
           <div>
-            {currentAnswerCount() > 0 && promptState !== PromptState.FetchingSecondaryResponse && (<button id="submit-answers" onClick={submitUserAnswersToInitialQuestions}>Submit Answers</button>)}
+            {currentAnswerCount() > 0 && promptState !== PromptState.FetchingSecondaryResponse && (<button id="submit-answers" onClick={submitUserAnswers}>Submit Answers</button>)}
           </div>
         </div>
       </div>);
@@ -157,7 +158,9 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
     console.log(responseData);
 
-    setNextStage(responseData.stage);
+    setWorkflowStage(responseData.stage);
+    setNextStepIndex(responseData.nextStepIndex)
+    
     if (!responseData.categoryQuesions) {
       throw new Error('No questions returned from server');
     }
@@ -168,7 +171,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     setCategoryQuestionsAndAnswers(qa);
   };
 
-  const submitUserAnswersToInitialQuestions = async (): Promise<void> => {
+  const submitUserAnswers = async (): Promise<void> => {
     try {
 
       setPromptState(PromptState.FetchingSecondaryResponse);
@@ -179,14 +182,27 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
         removeEmptyQuestions: true
       }
   
-      const finalPrompt = await submitUserAnswersToInitialQuestionsAsync(userObjective, categoryQuestionsAndAnswers, options);
-
-      setDetailedPlan(finalPrompt);
-      if (onDetailPlanGenerated) {
-        onDetailPlanGenerated(userObjective, finalPrompt);
+      if (nextStepIndex === undefined) {
+        throw new Error('Next step index is undefined');
       }
-        setFetchState(FetchState.Loaded);
-      setPromptState(PromptState.DisplayingFinalResults);
+
+      const response = await submitUserAnswersAsync(userObjective, categoryQuestionsAndAnswers, options, nextStepIndex);
+      setFetchState(FetchState.Loaded);
+      setWorkflowStage(response.stage);
+      setNextStepIndex(response.nextStepIndex);
+
+      if (response.stage === WorkflowStage.FINAL_PROMPT_GENERATED) {
+        if (!response.finalPrompt) {
+          console.error("Final stage reached but no prompt was generated.")
+        }
+        else {
+          setDetailedPlan(response.finalPrompt);
+          setPromptState(PromptState.DisplayingFinalResults);
+          if (onDetailPlanGenerated) {
+            onDetailPlanGenerated(userObjective, response.finalPrompt);
+          }
+        }
+      }
     }
     catch (error) {
       console.error(error);
@@ -203,7 +219,8 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     setUserObjective('');
     setCategoryQuestionsAndAnswers([]);
     setDetailedPlan('');
-    setNextStage(WorkflowStage.INITIAL);
+    setWorkflowStage(WorkflowStage.INITIAL);
+    setNextStepIndex(undefined)
     setFetchState(FetchState.NotStarted);
     setPromptState(PromptState.NeedInitialQuestion);
     setErrorMsg('');
@@ -273,9 +290,14 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   const renderCurrentServerState = () => {
     return (
       <div>
-        Next Stage: {nextStage}
+        <div>
+          Stage: {workflowStage}
+        </div>
+        <div>
+          Next Step: {nextStepIndex}
+        </div>
       </div>
-    );
+  );
   }
 
   const renderQuestionsAndAnswers = () => {

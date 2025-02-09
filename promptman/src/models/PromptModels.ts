@@ -48,5 +48,5 @@ export interface ExecuteStepResponse {
     stage: WorkflowStage;
     nextStepIndex?: number;
     categoryQuesions?: CategoryQuestions[]
-    finalPompt?: string;     
+    finalPrompt?: string;     
 }

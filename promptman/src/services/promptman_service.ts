@@ -27,16 +27,17 @@ export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string
   };
 
 
-  export const submitUserAnswersToInitialQuestionsAsync = async (userObjective: string, categoryQuestionsAndAnswers: CategoryQuestionsAndAnswers[], options:Options): Promise<string> => {
-    const payload:ProcessUserAnswersRequestBody = {
+  export const submitUserAnswersAsync = async (userObjective: string, categoryQuestionsAndAnswers: CategoryQuestionsAndAnswers[], options:Options, stepIndex:number): Promise<ExecuteStepResponse> => {
+    const payload:ExecuteStepRequest = {
         userObjective: userObjective,
+        stepToExecute: stepIndex,
         qa: categoryQuestionsAndAnswers,
         options: options
     }
 
     const bodyString = JSON.stringify(payload);
 
-    const url = `${PROMPTMAN_SERVICE_URL}/promptman/process-user-answers`;
+    const url = `${PROMPTMAN_SERVICE_URL}/promptman/process-step`;
     console.log(`url: ${url}`);
 
     const request = new Request(url, {
@@ -48,6 +49,6 @@ export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string
     });
 
     const response = await fetch(request);
-    const responseText = await response.text();
-    return responseText;
+    const responseModel: ExecuteStepResponse = await response.json();
+    return responseModel;
 };
