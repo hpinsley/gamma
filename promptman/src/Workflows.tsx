@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { getDefaultWorkflowIdAsync, getAllWorkflowsAsync, setDefaultWorkflowIdAsync } from './services/workflow_service';
 import { Workflow } from './models/WorkflowModels';
 import WorkflowDisplay from './WorkflowDisplay';
+import { useNavigate } from 'react-router-dom';
 
 interface WorkflowsProps {
 }
@@ -10,6 +11,8 @@ const Workflows: React.FC<WorkflowsProps> = () => {
   const [defaultWorkflowId, setDefaultWorkflowId] = React.useState('');
   const [workflows, setWorkflows] = React.useState<Workflow[]>([]);
   const [selectedWorkflow, setSelectedWorkflow] = React.useState<Workflow | undefined>(undefined);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
       getDefaultWorkflowIdAsync()
@@ -51,6 +54,12 @@ const Workflows: React.FC<WorkflowsProps> = () => {
     );
   }
 
+  const routeToEditWorkflow = (workflow: Workflow) : void => {
+    const route = `/workflows/edit/${workflow.id}`;
+    console.log(`Navigating to ${route}`)
+    navigate(route);
+  }
+
   return (
     <div id="workflows-container">
       <h1>Workflows</h1>
@@ -65,6 +74,7 @@ const Workflows: React.FC<WorkflowsProps> = () => {
       <hr/>
       <WorkflowDisplay 
         setAsDefault={changeDefaultWorkflow}
+        onEdit={routeToEditWorkflow}
         isDefault={selectedWorkflow !== undefined && defaultWorkflowId === selectedWorkflow.id} 
         workflow={selectedWorkflow} />
     </div>
