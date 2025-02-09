@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import { CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, Options } from './models/PromptModels';
+import { ExecuteStepResponse, CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, Options } from './models/PromptModels';
 import {getServerQAndAFromUserObjectiveAsync, submitUserAnswersToInitialQuestionsAsync} from './services/promptman_service';
 import { WorkflowStage } from './models/WorkflowModels';
+import { mapCategoryQuestions } from './common/utils';
 
 interface PromptManProps {
   onDetailPlanGenerated?: (question: string, detailedPlan: string) => any;
@@ -156,20 +157,13 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
     console.log(responseData);
 
-    setNextStage(responseData.nextStage);
+    setNextStage(responseData.stage);
+    if (!responseData.categoryQuesions) {
+      throw new Error('No questions returned from server');
+    }
 
     // Convert the response data to the format we need to include our answers
-    const qa: CategoryQuestionsAndAnswers[] = responseData.categoryQuesions.map((category: CategoryQuestions) => {
-      return {
-        category: category.category,
-        questionsAndAnswers: category.questions.map((question: string) => {
-          return {
-            question: question,
-            answer: ''
-          };
-        })
-      };
-    });
+    const qa: CategoryQuestionsAndAnswers[] = responseData.categoryQuesions.map(mapCategoryQuestions);
     
     setCategoryQuestionsAndAnswers(qa);
   };

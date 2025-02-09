@@ -35,3 +35,18 @@ export interface PromptResponse {
     nextStepIndex: number;
     categoryQuesions: CategoryQuestions[]     
 }
+
+export interface ExecuteStepRequest {
+    userObjective: string; // or the appropriate type
+    stepToExecute: number;
+    qa?: CategoryQuestionsAndAnswers[];
+    options?: Options | undefined;
+}
+
+export interface ExecuteStepResponse {
+    userObjective: string;
+    stage: WorkflowStage;
+    nextStepIndex?: number;
+    categoryQuesions?: CategoryQuestions[]
+    finalPompt?: string;     
+}

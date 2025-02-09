@@ -1,15 +1,16 @@
-import { InitialPromptRequest, PromptResponse, CategoryQuestions, CategoryQuestionsAndAnswers, ProcessUserAnswersRequestBody, Options } from '../models/PromptModels';
+import { ExecuteStepRequest, ExecuteStepResponse, CategoryQuestionsAndAnswers, ProcessUserAnswersRequestBody, Options } from '../models/PromptModels';
 import { PROMPTMAN_SERVICE_URL } from '../config';
 
-export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string): Promise<PromptResponse> => {
+export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string): Promise<ExecuteStepResponse> => {
 
-    const body: InitialPromptRequest = {
-      objective: userObjective
+    const body: ExecuteStepRequest = {
+      userObjective: userObjective,
+      stepToExecute: 0
     };
 
     const bodyString = JSON.stringify(body);
 
-    const url = `${PROMPTMAN_SERVICE_URL}/promptman/process-objective`;
+    const url = `${PROMPTMAN_SERVICE_URL}/promptman/process-step`;
     console.log(`url: ${url}`);
 
     const request = new Request(url, {
@@ -21,7 +22,7 @@ export const getServerQAndAFromUserObjectiveAsync = async (userObjective: string
     });
 
     const response = await fetch(request);
-    const responseModel: PromptResponse = await response.json();
+    const responseModel: ExecuteStepResponse = await response.json();
     return responseModel;
   };
 
