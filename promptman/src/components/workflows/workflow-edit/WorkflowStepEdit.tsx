@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import { Workflow, WorkflowStep, WorkflowStage } from '../../../models/WorkflowModels';
-
+import { WorkflowStep, Variable } from '../../../models/WorkflowModels';
+import { getVariableList } from '../../../services/workflow_service'
+import TemplateVariable from './TemplateVariable';
 
 interface WorkflowStepEditProps {
   indexNo: number;
@@ -13,13 +14,7 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [description, setDescription] = useState<string>(step.description);
   const [prompt, setPrompt] = useState<string>(step.prompt)
-
-  const cleanStepPrompt = (prompt:string) : React.JSX.Element => {
-    const lines = prompt.split('\n');
-    const elements = lines.map(line => (<div><span>{line}</span></div>))
-    const result = (<div>{elements}</div>)
-    return result;
-  }
+  const [variables, _] = useState<Variable[]>(getVariableList())
 
   const normalDisplay = () => {
     return (
@@ -28,9 +23,7 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
         <h2><button className='edit-step-btn' onClick={() => setIsEditing(true)}>Edit Step</button></h2>
         <h2>Description: {step.description}</h2>
         <h3>Stage: {step.stage}</h3>
-        <div>
-          <p>{cleanStepPrompt(step.prompt)}</p>
-        </div>
+        <textarea value={prompt} readOnly={true} />
       </div>
     );
   }
@@ -52,6 +45,13 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
     </div>
   )
 
+  const displayVariables = () => {
+    return (
+        <div className='variable-list'>
+          {variables.map((v, i) => <TemplateVariable key={i} variable={v} />)}
+        </div>
+    );
+  }
   const editDisplay = () => {
     return (
       <div className="workflow-edit-step">
@@ -63,6 +63,7 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
         <div>
           <textarea value={prompt} onChange={ev => setPrompt(ev.target.value)} />
         </div>
+        {displayVariables()}
         {displayEditDispositionButtons()}
       </div>
     );

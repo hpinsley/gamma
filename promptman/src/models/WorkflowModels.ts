@@ -15,3 +15,9 @@ export interface Workflow {
     id: string;
     steps: WorkflowStep[];
 }
+
+export interface Variable {
+    display: string;
+    description: string;
+    revolve: () => string;
+}

@@ -1,5 +1,17 @@
 import { PROMPTMAN_SERVICE_URL } from '../config';
-import { Workflow } from '../models/WorkflowModels';
+import { Workflow, Variable } from '../models/WorkflowModels';
+
+
+const variables:Variable[] = [
+      { display: "userObjective", description: "The user's objective", revolve: () => "${userObjective}" }
+    , { display: "qaJson", description: "The users answers", revolve: () => "${qaJson}" }
+    , { display: "initialTemplate", description: "The JSON format template to give the AI", revolve: () => "*** TEST ***" }
+];
+
+export function getVariableList() : Variable[]
+{
+  return variables;
+}
 
 export const getDefaultWorkflowIdAsync = async (): Promise<string> => {
     const url = `${PROMPTMAN_SERVICE_URL}/workflows/default-workflow/id`;
@@ -18,7 +30,6 @@ export const getWorkflowByIdAsync = async (workflowId: string): Promise<Workflow
   const workflow:Workflow = await response.json();
   return workflow
 };
-
 
 export const getAllWorkflowIdsAsync = async (): Promise<string[]> => {
   const url = `${PROMPTMAN_SERVICE_URL}/workflows`;
