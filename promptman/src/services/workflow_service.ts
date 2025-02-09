@@ -10,6 +10,16 @@ export const getDefaultWorkflowIdAsync = async (): Promise<string> => {
     return defaultWorkflowId;
 };
 
+export const getWorkflowByIdAsync = async (workflowId: string): Promise<Workflow|undefined> => {
+  const url = `${PROMPTMAN_SERVICE_URL}/workflows/${workflowId}`;
+  console.log(`url: ${url}`);
+
+  const response = await fetch(url);
+  const workflow:Workflow = await response.json();
+  return workflow
+};
+
+
 export const getAllWorkflowIdsAsync = async (): Promise<string[]> => {
   const url = `${PROMPTMAN_SERVICE_URL}/workflows`;
   console.log(`url: ${url}`);

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Workflow, WorkflowStep } from '../../../models/WorkflowModels';
 import WorflowStepEdit from './WorkflowStepEdit'
+import {getWorkflowByIdAsync} from '../../../services/workflow_service';
 
 interface WorkflowEditProps {
   workflowId: string;
@@ -9,6 +10,14 @@ interface WorkflowEditProps {
 
 const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
   const navigate = useNavigate();
+  const [workflow, setWorkflow] = useState<Workflow|undefined>(undefined);
+
+  useEffect(() => {
+      getWorkflowByIdAsync(workflowId)
+        .then(workflow => {
+          setWorkflow(workflow);
+        })
+    }, [workflowId]);
 
   const routeToWorkflows = () : void => {
     const route = `/workflows`;
@@ -45,15 +54,19 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     return null;
   }
 
+  if (!workflow) {
+    return null;
+  }
   
   return (
+    
     <div className="workflow-edit-container">
       <h1>
         Editing {workflowId}
       </h1>
       <table>
         <tbody>
-          {   workflow.steps.map((step, index) => displayStep(index, step)) }
+          {  workflow.steps.map((step, index) => displayStep(index, step)) }
         </tbody>
       </table>
     { displayButtons() }
