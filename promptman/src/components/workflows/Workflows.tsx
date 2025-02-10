@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { getDefaultWorkflowIdAsync, getAllWorkflowsAsync, setDefaultWorkflowIdAsync } from '../../services/workflow_service';
+import { addWorkflowAsync, getDefaultWorkflowIdAsync, getAllWorkflowsAsync, setDefaultWorkflowIdAsync } from '../../services/workflow_service';
 import { Workflow } from '../../models/WorkflowModels';
 import WorkflowDisplay from './workflow-display/WorkflowDisplay';
 import { useNavigate } from 'react-router-dom';
@@ -60,10 +60,21 @@ const Workflows: React.FC<WorkflowsProps> = () => {
     navigate(route);
   }
 
-  const duplicateWorkflow = (sourceWorkflow: Workflow) : void => {
+  const duplicateWorkflow = async (sourceWorkflow: Workflow) : Promise<void> => {
     const sourceWorkflowId =sourceWorkflow.id;
     const newId = prompt(`Copy workflow ${sourceWorkflowId} to what new id?`);
-    alert(newId);
+    if (!newId) {
+      return;
+    }
+
+    const newWorkflow = {...sourceWorkflow, id: newId}
+    const createdWorkflow = await addWorkflowAsync(newWorkflow);
+    console.log(`Created workflow ${createdWorkflow.id}`);
+
+    // Refetch the workflows
+    const workflows = await getAllWorkflowsAsync();
+    setWorkflows(workflows)
+    setSelectedWorkflow(workflows.find(w => w.id === newId));
   }
 
   return (

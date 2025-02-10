@@ -66,3 +66,43 @@ export const setDefaultWorkflowIdAsync = async (workflowId: string): Promise<voi
     const response = await fetch(url, { method: 'POST' });
     console.log("setDefaultWorkflow response", response.status);
 }
+
+export const addWorkflowAsync = async (workflow: Workflow): Promise<Workflow> => {
+
+    const bodyString = JSON.stringify(workflow);
+
+    const url = `${PROMPTMAN_SERVICE_URL}/workflows`;
+    console.log(`POST url: ${url}`);
+
+    const request = new Request(url, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: bodyString,
+    });
+
+    const response = await fetch(request);
+    const responseModel: Workflow = await response.json();
+    return responseModel;
+}
+
+export const updateWorkflowAsync = async (updatedWorkflow: Workflow): Promise<Workflow> => {
+
+  const bodyString = JSON.stringify(updatedWorkflow);
+
+  const url = `${PROMPTMAN_SERVICE_URL}/workflows/${updatedWorkflow.id}`;
+  console.log(`PUT url: ${url}`);
+
+  const request = new Request(url, {
+    method: "PUT",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: bodyString,
+  });
+
+  const response = await fetch(request);
+  const responseModel: Workflow = await response.json();
+  return responseModel;
+}

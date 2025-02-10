@@ -2,7 +2,7 @@ import React, {useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Workflow, WorkflowStep } from '../../../models/WorkflowModels';
 import WorflowStepEdit from './WorkflowStepEdit'
-import {getWorkflowByIdAsync} from '../../../services/workflow_service';
+import {getWorkflowByIdAsync, updateWorkflowAsync} from '../../../services/workflow_service';
 
 interface WorkflowEditProps {
   workflowId: string;
@@ -25,7 +25,14 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     navigate(route);
   }
 
-  const onSave = () => {
+  const onSave = async () : Promise<void> => {
+    if (workflow === undefined) {
+      console.error("onSave invoked in WorkflowEdit without a workflow");
+      return;
+    }
+
+    const updatedWorkflow = await updateWorkflowAsync(workflow);
+    console.log(`Updated workflow ${updatedWorkflow.id}`);
     routeToWorkflows();
   }
 
@@ -78,12 +85,12 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
       <h1>
         Editing {workflowId}
       </h1>
+      { displayButtons() }
       <table>
         <tbody>
           {  workflow.steps.map((step, index) => displayStep(index, step)) }
         </tbody>
       </table>
-    { displayButtons() }
     </div>
   );
 };
