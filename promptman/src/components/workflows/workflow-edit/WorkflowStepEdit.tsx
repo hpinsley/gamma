@@ -22,7 +22,7 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
     return (
       <div className="workflow-edit-step">
         <h1>Step {indexNo + 1}</h1>
-        <h2><button className='edit-step-btn' onClick={() => setIsEditing(true)}>Edit Step</button></h2>
+        <h2><button className='edit-step-btn' onClick={startEditing}>Edit Step</button></h2>
         <h2>Description: {step.description}</h2>
         <h3>Stage: {step.stage}</h3>
         <textarea value={prompt} readOnly={true} />
@@ -30,14 +30,22 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
     );
   }
 
-  const onSaveStepEdits = () => {
-    const updatedWorkflow = { ...step, description: description, prompt: prompt }
-    onStepChange(updatedWorkflow);
+  const startEditing = () => {
+    setIsEditing(true);
+  }
+
+  const stopEditing = () => {
     setIsEditing(false);
   }
 
+  const onSaveStepEdits = () => {
+    const updatedWorkflow = { ...step, description: description, prompt: prompt }
+    onStepChange(updatedWorkflow);
+    stopEditing();
+  }
+
   const onCancelStepEdits = () => {
-    setIsEditing(false);
+    stopEditing();
   }
   
   const displayEditDispositionButtons = () => (
