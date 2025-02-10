@@ -55,7 +55,7 @@ const Workflows: React.FC<WorkflowsProps> = () => {
   }
 
   const routeToEditWorkflow = (workflow: Workflow) : void => {
-    const route = `/workflows/edit/${workflow.id}`;
+    const route = `/workflows/${workflow.id}/edit`;
     console.log(`Navigating to ${route}`)
     navigate(route);
   }

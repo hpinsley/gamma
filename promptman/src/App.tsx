@@ -33,7 +33,7 @@ function App() {
       <Routes>
         <Route path="/" element={<PromptMan onDetailPlanGenerated={logDetailedPlan} />} />
         <Route path="/workflows" element={<Workflows />} />
-        <Route path="/workflows/edit/:workflowId" element={<WorkflowEditWrapper />} />
+        <Route path="/workflows/:workflowId/edit" element={<WorkflowEditWrapper />} />
 
       </Routes>
     </Router>
