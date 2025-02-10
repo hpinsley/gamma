@@ -7,9 +7,10 @@ interface WorkflowStepEditProps {
   indexNo: number;
   step: WorkflowStep;
   onStepChange: (workflowStep:WorkflowStep) => void;
+  onIsEditingChange: (workflowStep:WorkflowStep, isEditing: boolean) => void;
 }
 
-const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onStepChange }) => {
+const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onStepChange, onIsEditingChange }) => {
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [description, setDescription] = useState<string>(step.description);
@@ -32,10 +33,13 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
 
   const startEditing = () => {
     setIsEditing(true);
+    onIsEditingChange(step, true)
+
   }
 
   const stopEditing = () => {
     setIsEditing(false);
+    onIsEditingChange(step, false);
   }
 
   const onSaveStepEdits = () => {

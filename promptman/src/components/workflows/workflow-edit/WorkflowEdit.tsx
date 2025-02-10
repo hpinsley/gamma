@@ -40,6 +40,10 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     routeToWorkflows();
   }
 
+  const noteWorkflowStepIsEditingState = (step: WorkflowStep, isEditing: boolean) => {
+    console.log (`Step ${step.description} editing state is now ${isEditing}`);
+
+  }
   const updateWorkflowStep = (index: number, updatedWorkflowStep: WorkflowStep) => {
     if (!workflow) {
       console.error("No workflow is defined in updateWorkflowStep")
@@ -58,7 +62,10 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     return (
       <tr key={index}>
         <td>
-          <WorflowStepEdit key={index} indexNo={index} step={step} onStepChange={(updatedStep:WorkflowStep) => updateWorkflowStep(index, updatedStep)} />
+          <WorflowStepEdit key={index} indexNo={index} step={step} 
+              onStepChange={(updatedStep:WorkflowStep) => updateWorkflowStep(index, updatedStep)} 
+              onIsEditingChange={noteWorkflowStepIsEditingState}
+              />
         </td>
       </tr>
     )
