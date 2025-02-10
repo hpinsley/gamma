@@ -5,7 +5,18 @@ import { Workflow, Variable } from '../models/WorkflowModels';
 const variables:Variable[] = [
       { display: "userObjective", description: "The user's objective", revolve: () => "${userObjective}" }
     , { display: "qaJson", description: "The users answers", revolve: () => "${qaJson}" }
-    , { display: "initialTemplate", description: "The JSON format template to give the AI", revolve: () => "*** TEST ***" }
+    , { display: "initialTemplate", description: "The JSON format template to give the AI", 
+        revolve: () => `[
+  {
+    "category": "Category Name",
+    "questions": [
+      "Question 1",
+      "Question 2",
+      "Question 3"
+    ]
+  }
+]
+` }
 ];
 
 export function getVariableList() : Variable[]
