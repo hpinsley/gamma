@@ -7,9 +7,10 @@ interface WorkflowDisplayProps {
   isDefault: boolean;
   setAsDefault: (workflowId: string) => void;
   onEdit: (workflow:Workflow) => void;
+  onCopy: (workflow:Workflow) => void;
 }
 
-const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({ isDefault, workflow, setAsDefault, onEdit }) => {
+const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({ isDefault, workflow, setAsDefault, onEdit, onCopy }) => {
 
   if (!workflow) {
     return null;
@@ -31,6 +32,7 @@ const WorkflowDisplay: React.FC<WorkflowDisplayProps> = ({ isDefault, workflow, 
         {workflow.id}
         {!isDefault && (<button className="set-as-default" onClick={() => setAsDefault(workflow.id)}>Set as Default</button>)}
         <button className='workflow-edit-btn' onClick={() => onEdit(workflow)}>Edit</button>
+        <button className='workflow-copy-btn' onClick={() => onCopy(workflow)}>Copy</button>
       </h1>
       <table>
         <tbody>

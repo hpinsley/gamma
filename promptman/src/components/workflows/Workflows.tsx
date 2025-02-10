@@ -60,6 +60,12 @@ const Workflows: React.FC<WorkflowsProps> = () => {
     navigate(route);
   }
 
+  const duplicateWorkflow = (sourceWorkflow: Workflow) : void => {
+    const sourceWorkflowId =sourceWorkflow.id;
+    const newId = prompt(`Copy workflow ${sourceWorkflowId} to what new id?`);
+    alert(newId);
+  }
+
   return (
     <div id="workflows-container">
       <h1>Workflows</h1>
@@ -75,6 +81,7 @@ const Workflows: React.FC<WorkflowsProps> = () => {
       <WorkflowDisplay 
         setAsDefault={changeDefaultWorkflow}
         onEdit={routeToEditWorkflow}
+        onCopy={(workflow) => duplicateWorkflow(workflow)}
         isDefault={selectedWorkflow !== undefined && defaultWorkflowId === selectedWorkflow.id} 
         workflow={selectedWorkflow} />
     </div>
