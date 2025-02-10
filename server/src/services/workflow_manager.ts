@@ -58,3 +58,14 @@ export function getDefaultWorkflow(): Workflow | undefined {
 export function find_workflow_by_id(id: string): Workflow | undefined {
     return workflows.find(workflow => workflow.id === id);
 }
+
+export function upsertWorkflow(workflow: Workflow) : void {
+
+    const existingWorkflow = find_workflow_by_id(workflow.id);
+    if (existingWorkflow) {
+        workflows = workflows.map(w => w.id === workflow.id ? workflow : w);
+    }
+    else {
+        workflows.push(workflow);
+    }
+}
