@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import { WorkflowStep, Variable } from '../../../models/WorkflowModels';
 import { getVariableList } from '../../../services/workflow_service'
 import TemplateVariable from './TemplateVariable';
@@ -15,8 +15,10 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
   const [description, setDescription] = useState<string>(step.description);
   const [prompt, setPrompt] = useState<string>(step.prompt)
   const [variables, _] = useState<Variable[]>(getVariableList())
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const normalDisplay = () => {
+
     return (
       <div className="workflow-edit-step">
         <h1>Step {indexNo + 1}</h1>
@@ -45,10 +47,25 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
     </div>
   )
 
-  const displayVariables = () => {
+  const insertTextAtCursor = (insertText: string) => {
+    if (textareaRef.current) {
+      const textarea = textareaRef.current;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const newText = prompt.slice(0, start) + insertText + prompt.slice(end);
+      setPrompt(newText);
+
+      // Move the cursor to the end of the inserted text
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = start + insertText.length;
+      }, 0);
+    }
+  };
+    
+    const displayVariables = () => {
     return (
         <div className='variable-list'>
-          {variables.map((v, i) => <TemplateVariable key={i} variable={v} />)}
+          {variables.map((v, i) => <TemplateVariable key={i} variable={v} onInsertVariable={v => insertTextAtCursor(v.revolve())} />)}
         </div>
     );
   }
@@ -61,7 +78,7 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
         </h2>
         <h3>Stage: {step.stage}</h3>
         <div>
-          <textarea value={prompt} onChange={ev => setPrompt(ev.target.value)} />
+          <textarea ref={textareaRef} value={prompt} onChange={ev => setPrompt(ev.target.value)} />
         </div>
         {displayVariables()}
         {displayEditDispositionButtons()}

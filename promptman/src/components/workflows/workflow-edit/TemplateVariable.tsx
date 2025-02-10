@@ -2,12 +2,13 @@ import React, {useState} from 'react';
 import { Variable } from '../../../models/WorkflowModels';
 
 interface TemplateVariableProps {
-  variable: Variable
+  variable: Variable,
+  onInsertVariable: (v:Variable) => void;
 }
 
-const TemplateVariable: React.FC<TemplateVariableProps> = ({ variable }) => {
+const TemplateVariable: React.FC<TemplateVariableProps> = ({ variable, onInsertVariable }) => {
   return (
-      <button className='insert-variable-btn'>{'Insert ' + variable.description}</button>
+      <button className='insert-variable-btn' onClick={() => onInsertVariable(variable)}>{'Insert ' + variable.description}</button>
   )
 
 };

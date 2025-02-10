@@ -253,6 +253,10 @@ button {
 
 div.variable-list {
   width: 80vw;
-  display: block;
-  border: 3px solid blue;
+  margin-bottom: 2px;
+}
+
+div.variable-list button {
+  color: blue;
+  margin-bottom: 2px;
 }
