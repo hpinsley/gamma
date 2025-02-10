@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from 'express';
-import { upsertWorkflow, find_workflow_by_id, getDefaultWorkflow, getWorkflows, getDefaultWorkflowId, setDefaultWorkflowId } from '../services/workflow_manager';
+import { deleteWorkflow, upsertWorkflow, find_workflow_by_id, getDefaultWorkflow, getWorkflows, getDefaultWorkflowId, setDefaultWorkflowId } from '../services/workflow_manager';
 import { Workflow, WorkflowStage } from '../models/workflow/workflow_models';
 
 const workflowRouter = Router();
@@ -90,5 +90,23 @@ workflowRouter.put('/:workflowId', async (req: express.Request<{ workflowId: str
   upsertWorkflow(updatedWorkflow);
   res.json(updatedWorkflow)
 });
+
+workflowRouter.delete('/:workflowId', async (req: express.Request<{ workflowId: string }, any, any>, res: any) => {
+  const workflowId = req.params.workflowId
+  if (!workflowId) {
+    res.status(400).json({ message: ':workflowId is required' })
+    return;
+  }
+
+  const existingWorkflow = find_workflow_by_id(workflowId);
+  if (!existingWorkflow) {
+    res.status(404).json({ message: `Workflow with ID ${workflowId} not found` });
+    return;
+  }
+
+  deleteWorkflow(existingWorkflow.id);
+  res.status(200).json({ message: `Workflow with ID ${workflowId} removed.` });
+});
+
 
 export default workflowRouter;

@@ -59,6 +59,10 @@ export function find_workflow_by_id(id: string): Workflow | undefined {
     return workflows.find(workflow => workflow.id === id);
 }
 
+export function deleteWorkflow(workflowIdToDelete: string) : void {
+    workflows = workflows.filter(w => w.id !== workflowIdToDelete);
+}
+
 export function upsertWorkflow(workflow: Workflow) : void {
 
     const existingWorkflow = find_workflow_by_id(workflow.id);
