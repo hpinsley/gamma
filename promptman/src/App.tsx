@@ -18,6 +18,12 @@ function App() {
     return <WorkflowEdit workflowId={workflowId!} />;
   };
 
+  const WorkflowsWrapper = () => {
+    const { workflowId } = useParams<{ workflowId: string }>();
+    return <Workflows selectedWorkflowId={workflowId!} />;
+
+  }
+
   return (
     <Router>
       <nav>
@@ -34,7 +40,7 @@ function App() {
         <Route path="/" element={<PromptMan onDetailPlanGenerated={logDetailedPlan} />} />
         <Route path="/workflows" element={<Workflows />} />
         <Route path="/workflows/:workflowId/edit" element={<WorkflowEditWrapper />} />
-
+        <Route path="/workflows/:workflowId" element={<WorkflowsWrapper />} />
       </Routes>
     </Router>
   );

@@ -5,9 +5,10 @@ import WorkflowDisplay from './workflow-display/WorkflowDisplay';
 import { useNavigate } from 'react-router-dom';
 
 interface WorkflowsProps {
+  selectedWorkflowId?: string;
 }
 
-const Workflows: React.FC<WorkflowsProps> = () => {
+const Workflows: React.FC<WorkflowsProps> = ({selectedWorkflowId}) => {
   const [defaultWorkflowId, setDefaultWorkflowId] = React.useState('');
   const [workflows, setWorkflows] = React.useState<Workflow[]>([]);
   const [selectedWorkflow, setSelectedWorkflow] = React.useState<Workflow | undefined>(undefined);
@@ -18,10 +19,12 @@ const Workflows: React.FC<WorkflowsProps> = () => {
       getDefaultWorkflowIdAsync()
         .then((defaultWorkflowId) => {
           setDefaultWorkflowId(defaultWorkflowId)
+          const workflowIdToSelect = selectedWorkflowId ? selectedWorkflowId : defaultWorkflowId;
+
           getAllWorkflowsAsync()
                 .then((workflows) => {
                     setWorkflows(workflows)
-                    const selectedWorkflow = workflows.find((workflow) => workflow.id === defaultWorkflowId);
+                    const selectedWorkflow = workflows.find((workflow) => workflow.id === workflowIdToSelect);
                     setSelectedWorkflow(selectedWorkflow);
                 });
           });
