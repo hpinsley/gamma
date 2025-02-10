@@ -11,6 +11,25 @@ workflowRouter.get('/', async (req: any, res: any) => {
   res.json(workflows);
 });
 
+workflowRouter.post('/', async (req: express.Request<{}, Workflow, Workflow>, res: any) => {
+
+  const newWorkflow = req.body;
+  const newWorkflowId = newWorkflow.id;
+  if (!newWorkflowId) {
+    res.status(400).json({ 'message': 'No workflow id specified.'});
+    return;
+  }
+
+  const existingWorkflow = find_workflow_by_id(newWorkflowId);
+  if (existingWorkflow) {
+    res.status(400).json({ 'message': `Workflow ${newWorkflowId} already exists.`});
+    return;
+  }
+  
+  upsertWorkflow(newWorkflow);
+  res.json(newWorkflow)
+});
+
 workflowRouter.get('/default-workflow', async (req: any, res: any) => {
   // Access the 'objective' from the request body
   const defaultWorkflow = getDefaultWorkflow();
@@ -56,13 +75,20 @@ workflowRouter.put('/:workflowId', async (req: express.Request<{ workflowId: str
     return;
   }
 
-  const workflow = find_workflow_by_id(workflowId);
-  if (!workflow) {
+  const updatedWorkflow = req.body;
+  if (updatedWorkflow.id !== workflowId) {
+    res.status(400).json({ 'message': 'Workflow id in route does not match body'});
+    return;
+  }
+
+  const existingWorkflow = find_workflow_by_id(workflowId);
+  if (!existingWorkflow) {
     res.status(404).json({ message: `Workflow with ID ${workflowId} not found` });
     return;
   }
 
-  res.json(workflow)
+  upsertWorkflow(updatedWorkflow);
+  res.json(updatedWorkflow)
 });
 
 export default workflowRouter;
