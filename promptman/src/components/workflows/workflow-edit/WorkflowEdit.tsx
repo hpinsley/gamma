@@ -11,6 +11,7 @@ interface WorkflowEditProps {
 const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
   const navigate = useNavigate();
   const [workflow, setWorkflow] = useState<Workflow|undefined>(undefined);
+  const [stepsBeingEdited, setStepsBeingEdited] = useState<WorkflowStep[]>([]);
 
   useEffect(() => {
       getWorkflowByIdAsync(workflowId)
@@ -42,8 +43,13 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
 
   const noteWorkflowStepIsEditingState = (step: WorkflowStep, isEditing: boolean) => {
     console.log (`Step ${step.description} editing state is now ${isEditing}`);
-
+    const newList = stepsBeingEdited.filter(s => s !== step);
+    if (isEditing) {
+      newList.push(step);
+    }
+    setStepsBeingEdited(newList);
   }
+
   const updateWorkflowStep = (index: number, updatedWorkflowStep: WorkflowStep) => {
     if (!workflow) {
       console.error("No workflow is defined in updateWorkflowStep")
@@ -56,6 +62,11 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     }
     
     setWorkflow(updatedWorkflow)
+  }
+
+  const displayStepsBeingEdited = () => {
+    const elements = stepsBeingEdited.map(s => (<li><span>Editing step: </span><b>{s.description}</b></li>))
+    return (<ul>{elements}</ul>)
   }
 
   const displayStep = (index:number, step:WorkflowStep) => {
@@ -71,12 +82,21 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     )
   }
 
-  const displayButtons = () => (
+  const displayButtons = () => {
+    // If we are in the process of editing steps, we hide the save and cancel button until they save or cancel each step
+
+    if (stepsBeingEdited.length > 0) {
+      return;
+    }
+    return (
     <div>
       <button id="save-workflow-edits" onClick={onSave}>Save Workflow</button>
       <button id="cancel-workflow-edits" onClick={onCancel}>Cancel</button>
     </div>
-  )
+    );
+  };
+
+  // Main render is here
 
   if (!workflowId) {
     return null;
@@ -93,11 +113,14 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
         Editing {workflowId}
       </h1>
       { displayButtons() }
-      <table>
-        <tbody>
-          {  workflow.steps.map((step, index) => displayStep(index, step)) }
-        </tbody>
-      </table>
+      { displayStepsBeingEdited() }
+      <div className="workflow-edit-steps-container">
+        <table>
+          <tbody>
+            {  workflow.steps.map((step, index) => displayStep(index, step)) }
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

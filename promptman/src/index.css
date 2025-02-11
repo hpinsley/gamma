@@ -260,3 +260,12 @@ div.variable-list button {
   color: blue;
   margin-bottom: 2px;
 }
+
+div.workflow-edit-steps-container {
+  border: 3px solid black;
+  padding: 30px;
+}
+
+div.workflow-edit-step h1 {
+  font-size: 12pt;
+}
