@@ -1,22 +1,26 @@
-import React, {useState, useRef} from 'react';
-import { WorkflowStep, Variable } from '../../../models/WorkflowModels';
+import React, { useState, useEffect, useRef } from 'react';
+import { WorkflowStep, Variable, WorkflowStage } from '../../../models/WorkflowModels';
 import { getVariableList } from '../../../services/workflow_service'
 import TemplateVariable from './TemplateVariable';
+import { getStages } from '../../../services/workflow_service';
 
 interface WorkflowStepEditProps {
   indexNo: number;
   step: WorkflowStep;
-  onStepChange: (workflowStep:WorkflowStep) => void;
-  onIsEditingChange: (workflowStep:WorkflowStep, isEditing: boolean) => void;
+  onStepChange: (workflowStep: WorkflowStep) => void;
+  onIsEditingChange: (workflowStep: WorkflowStep, isEditing: boolean) => void;
 }
 
 const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onStepChange, onIsEditingChange }) => {
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [description, setDescription] = useState<string>(step.description);
+  const [selectedStage, setSelectedStage] = useState<WorkflowStage>(step.stage);
   const [prompt, setPrompt] = useState<string>(step.prompt)
   const [variables, _] = useState<Variable[]>(getVariableList())
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const selectableStages = getStages();
 
   const normalDisplay = () => {
 
@@ -43,7 +47,7 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
   }
 
   const onSaveStepEdits = () => {
-    const updatedWorkflow = { ...step, description: description, prompt: prompt }
+    const updatedWorkflow = { ...step, description: description, prompt: prompt, stage: selectedStage }
     onStepChange(updatedWorkflow);
     stopEditing();
   }
@@ -51,7 +55,7 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
   const onCancelStepEdits = () => {
     stopEditing();
   }
-  
+
   const displayEditDispositionButtons = () => (
     <div>
       <button id="save-workflow-step-edits" onClick={onSaveStepEdits}>Save Step Changes</button>
@@ -73,14 +77,27 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
       }, 0);
     }
   };
-    
-    const displayVariables = () => {
+
+  const displayVariables = () => {
     return (
-        <div className='variable-list'>
-          {variables.map((v, i) => <TemplateVariable key={i} variable={v} onInsertVariable={v => insertTextAtCursor(v.revolve())} />)}
-        </div>
+      <div className='variable-list'>
+        {variables.map((v, i) => <TemplateVariable key={i} variable={v} onInsertVariable={v => insertTextAtCursor(v.revolve())} />)}
+      </div>
     );
   }
+
+  const editStage = () => {
+    return (
+      <div>
+        Stage:
+        <select onChange={(e) => setSelectedStage(e.currentTarget.value as WorkflowStage)} value={selectedStage}>
+          {selectableStages.map((stage, index) => <option key={index}>{stage}</option>)}
+        </select>
+      </div>
+
+    )
+  }
+
   const editDisplay = () => {
     return (
       <div className="workflow-edit-step">
@@ -88,7 +105,7 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
         <h2>Description:
           <input type='text' value={description} onChange={(ev => setDescription(ev.target.value))} />
         </h2>
-        <h3>Stage: {step.stage}</h3>
+        <h3>{editStage()}</h3>
         <div>
           <textarea ref={textareaRef} value={prompt} onChange={ev => setPrompt(ev.target.value)} />
         </div>

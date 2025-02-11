@@ -1,5 +1,5 @@
 import { PROMPTMAN_SERVICE_URL } from '../config';
-import { Workflow, Variable } from '../models/WorkflowModels';
+import { Workflow, Variable, WorkflowStage } from '../models/WorkflowModels';
 
 
 const variables:Variable[] = [
@@ -22,6 +22,15 @@ const variables:Variable[] = [
 export function getVariableList() : Variable[]
 {
   return variables;
+}
+
+export function getStages() : WorkflowStage[]
+{
+  return [
+    WorkflowStage.INITIAL,
+    WorkflowStage.QUESTIONS_AND_ANSWERS,
+    WorkflowStage.FINAL_PROMPT_GENERATED
+  ];
 }
 
 export const getDefaultWorkflowIdAsync = async (): Promise<string> => {
