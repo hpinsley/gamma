@@ -104,6 +104,11 @@ workflowRouter.delete('/:workflowId', async (req: express.Request<{ workflowId: 
     return;
   }
 
+  if (workflowId === getDefaultWorkflowId()) {
+      res.status(400).json({ message: 'You may not delete the default workflow' })
+      return;
+  }
+
   deleteWorkflow(existingWorkflow.id);
   res.status(200).json({ message: `Workflow with ID ${workflowId} removed.` });
 });
