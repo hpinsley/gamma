@@ -242,7 +242,7 @@ button {
   font-size: 10pt;
   margin-left: 10pt;
   border-radius: 5px;
-  background-color: #4CAF50; /* Green background */
+  background-color: black; /* Green background */
   color: white; /* White text */
   border: none; /* Remove border */
   padding: 5px 10px; /* Add some padding */
@@ -257,7 +257,6 @@ div.variable-list {
 }
 
 div.variable-list button {
-  color: blue;
   margin-bottom: 2px;
 }
 
@@ -266,6 +265,51 @@ div.workflow-edit-steps-container {
   padding: 30px;
 }
 
-div.workflow-edit-step h1 {
-  font-size: 12pt;
+div.workflow-edit-step div.step-index {
+  font-size: 18pt;
+}
+
+div.workflow-edit-step.editing {
+  background-color: #4a90e2; /* Soft blue background */
+  padding: 15px; /* Increased padding for more space */
+  border: 2px solid #ffffff; /* White border for contrast */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  font-weight: bold; /* Bold text for emphasis */
+  color: #ffffff; /* White text color for better readability */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+div.workflow-edit-step.editing input, 
+div.workflow-edit-step.editing textarea, 
+div.workflow-edit-step.editing select {
+  background-color: #ffffff; /* White background for the input */
+  border: 2px solid #4a90e2; /* Blue border to match the parent */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Padding for better spacing */
+  color: #333333; /* Dark text color for readability */
+  font-size: 16px; /* Font size for better legibility */
+  transition: border-color 0.3s ease; /* Smooth transition for focus effect */
+  width: 100%; /* Full width to fill the parent */
+  box-sizing: border-box; /* Include padding and border in the element's total width */
+}
+
+div.workflow-edit-step.editing input:focus, 
+div.workflow-edit-step.editing select:focus {
+  border-color: #357ab8; /* Darker blue border on focus */
+  outline: none; /* Remove default outline */
+  box-shadow: 0 0 5px rgba(53, 122, 184, 0.5); /* Subtle shadow on focus */
+}
+
+div.workflow-edit-step.editing label {
+  font-size: 16px; /* Font size for readability */
+  font-weight: bold; /* Bold text for emphasis */
+  color: #ffffff; /* White color for better contrast */
+  display: block; /* Make the label a block element for better spacing */
+  margin-bottom: 8px; /* Space below the label */
+  transition: color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+div.workflow-edit-step.editing label:hover {
+  color: #e0e0e0; /* Light gray on hover for subtle feedback */
 }

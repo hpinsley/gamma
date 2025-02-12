@@ -54,6 +54,9 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
 
   const onCancelStepEdits = () => {
     stopEditing();
+    setDescription(step.description);
+    setSelectedStage(step.stage);
+    setPrompt(step.prompt);  
   }
 
   const displayEditDispositionButtons = () => (
@@ -89,10 +92,11 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
   const editStage = () => {
     return (
       <div>
-        Stage:
-        <select onChange={(e) => setSelectedStage(e.currentTarget.value as WorkflowStage)} value={selectedStage}>
-          {selectableStages.map((stage, index) => <option key={index}>{stage}</option>)}
-        </select>
+        <label>Stage:
+          <select onChange={(e) => setSelectedStage(e.currentTarget.value as WorkflowStage)} value={selectedStage}>
+            {selectableStages.map((stage, index) => <option key={index}>{stage}</option>)}
+          </select>
+        </label>
       </div>
 
     )
@@ -100,15 +104,19 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
 
   const editDisplay = () => {
     return (
-      <div className="workflow-edit-step">
-        <h1>Step {indexNo + 1}</h1>
-        <h2>Description:
-          <input type='text' value={description} onChange={(ev => setDescription(ev.target.value))} />
-        </h2>
-        <h3>{editStage()}</h3>
-        <div>
-          <textarea ref={textareaRef} value={prompt} onChange={ev => setPrompt(ev.target.value)} />
+      <div className="workflow-edit-step editing">
+        <div className='step-index'>Step {indexNo + 1}</div>
+        <div className='description'>
+          <label>Description
+          <input className='step-description' type='text' value={description} onChange={(ev => setDescription(ev.target.value))} />
+          </label>
         </div>
+        {editStage()}
+        <div className='prompt-entry'>
+          <label>Prompt Template
+          <textarea ref={textareaRef} value={prompt} onChange={ev => setPrompt(ev.target.value)} />
+          </label>
+          </div>
         {displayVariables()}
         {displayEditDispositionButtons()}
       </div>

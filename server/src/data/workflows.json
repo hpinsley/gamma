@@ -11,7 +11,7 @@
                         "${userObjective}",
                         "What information do you need from me to help you give me the helpful and detailed response to my question?",
                         "",
-                        "Please format your response as json as a list of questions by category.  Use this format:",
+                        "Please format your response as JSON as a list of questions by category.  Use this format:",
                         "",
                         "[",
                         "  {",
@@ -24,7 +24,7 @@
                         "  }",
                         "]",
                         "",
-                        "Do not include any additional commentatry or niceties in your response.  Just the json."
+                        "Do not include any additional commentary or niceties in your response.  Just the JSON and only JSON."
                     ]
                 },
                 {
@@ -52,7 +52,7 @@
                         "${userObjective}",
                         "WHAT information do you need from me to help you give me the helpful and detailed response to my question?",
                         "",
-                        "Please format your response as json as a list of questions by category.  Use this format:",
+                        "Please format your response as JSON as a list of questions by category.  Use this format:",
                         "",
                         "[",
                         "  {",
@@ -65,7 +65,7 @@
                         "  }",
                         "]",
                         "",
-                        "Do not include any additional commentatry or niceties in your response.  Just the json."
+                        "Do not include any additional commentary or niceties in your response.  Just the JSON and only JSON."
                     ]
                 },
                 {
