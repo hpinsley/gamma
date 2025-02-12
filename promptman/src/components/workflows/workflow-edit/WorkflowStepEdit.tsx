@@ -19,8 +19,18 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
   const [prompt, setPrompt] = useState<string>(step.prompt)
   const [variables, _] = useState<Variable[]>(getVariableList())
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isFocused, setIsFocused] = useState(false);
 
   const selectableStages = getStages();
+
+
+  const handleFocus = () => {
+      setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+      setIsFocused(false);
+  };
 
   const normalDisplay = () => {
 
@@ -114,10 +124,14 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
         {editStage()}
         <div className='prompt-entry'>
           <label>Prompt Template
-          <textarea ref={textareaRef} value={prompt} onChange={ev => setPrompt(ev.target.value)} />
+          <textarea ref={textareaRef} value={prompt} 
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onChange={ev => setPrompt(ev.target.value)} 
+          />
           </label>
           </div>
-        {displayVariables()}
+        {isFocused && displayVariables()}
         {displayEditDispositionButtons()}
       </div>
     );
