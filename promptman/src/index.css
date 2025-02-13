@@ -335,3 +335,31 @@ div.workflow-edit-step.editing label {
 span.step-description {
   color: #4a90e2; /* Soft blue background */
 }
+
+button.save-button {
+  background-color: #28a745; /* Bright Green */
+  color: #ffffff; /* White text */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.save-button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+button.cancel-button {
+  background-color: #dc3545; /* Bright Red */
+  color: #ffffff; /* White text */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.cancel-button:hover {
+  background-color: #c82333; /* Darker red on hover */
+}

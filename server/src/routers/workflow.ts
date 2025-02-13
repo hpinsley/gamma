@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from 'express';
-import { deleteWorkflow, upsertWorkflow, find_workflow_by_id, getDefaultWorkflow, getWorkflows, getDefaultWorkflowId, setDefaultWorkflowId } from '../services/workflow_manager';
+import { exportToWorkflowJsonFormat, deleteWorkflow, upsertWorkflow, find_workflow_by_id, getDefaultWorkflow, getWorkflows, getDefaultWorkflowId, setDefaultWorkflowId } from '../services/workflow_manager';
 import { Workflow, WorkflowStage } from '../models/workflow/workflow_models';
 
 const workflowRouter = Router();
@@ -9,6 +9,12 @@ workflowRouter.get('/', async (req: any, res: any) => {
   // Access the 'objective' from the request body
   const workflows = getWorkflows();
   res.json(workflows);
+});
+
+workflowRouter.get('/config', async (req: any, res: any) => {
+  // Access the 'objective' from the request body
+  const result = exportToWorkflowJsonFormat();
+  res.json(result);
 });
 
 workflowRouter.post('/', async (req: express.Request<{}, Workflow, Workflow>, res: any) => {

@@ -23,21 +23,36 @@ try {
             }))
         })
     );
-    console.log("Read in workflows", workflows);                            
+    console.log("Read in workflows", workflows);
 }
 catch (error) {
     console.error(error);
 }
 
+export function exportToWorkflowJsonFormat(): any {
+    const dto = {
+        default: getDefaultWorkflowId(),
+        workflows: getWorkflows().map(wf => ({
+            id: wf.id,
+            steps: wf.steps.map(ws => ({
+                description: ws.description,
+                stage: ws.stage,
+                promptLines: ws.prompt.split('\n')
+            }))
+        }))
+    };
+
+    return dto;
+}
 
 export function getDefaultWorkflowId(): string {
     return defaultWorkflowId;
 }
 
-export function setDefaultWorkflowId(workflowId:string): boolean {
+export function setDefaultWorkflowId(workflowId: string): boolean {
     console.log(`Setting default workflow id to ${workflowId}`);
     const newDefaultWorkflow = find_workflow_by_id(workflowId);
-    
+
     if (newDefaultWorkflow) {
         defaultWorkflowId = workflowId;
         return true;
@@ -59,11 +74,11 @@ export function find_workflow_by_id(id: string): Workflow | undefined {
     return workflows.find(workflow => workflow.id === id);
 }
 
-export function deleteWorkflow(workflowIdToDelete: string) : void {
+export function deleteWorkflow(workflowIdToDelete: string): void {
     workflows = workflows.filter(w => w.id !== workflowIdToDelete);
 }
 
-export function upsertWorkflow(workflow: Workflow) : void {
+export function upsertWorkflow(workflow: Workflow): void {
 
     const existingWorkflow = find_workflow_by_id(workflow.id);
     if (existingWorkflow) {
