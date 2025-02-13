@@ -3,13 +3,15 @@ import * as fs from 'fs';
 import { get } from "http";
 import * as path from 'path';
 
-const workflowsFilePath = path.join(__dirname, '../data/workflows.json');
+const workflowsRuntimeFilePath = path.join(__dirname, '../data/workflows.json');
+const workflowsCompileTimeFilePath = path.join(__dirname, '../../src/data/workflows.json');
+
 let workflowsData: any;
 let defaultWorkflowId: string = 'none';
 let workflows: Workflow[] = [];
 
 try {
-    const rawData = JSON.parse(fs.readFileSync(workflowsFilePath, 'utf-8'));
+    const rawData = JSON.parse(fs.readFileSync(workflowsRuntimeFilePath, 'utf-8'));
     defaultWorkflowId = rawData.default;
     console.log("Default workflow id:", defaultWorkflowId);
 
@@ -42,7 +44,10 @@ export function exportToWorkflowJsonFormat(): any {
         }))
     };
 
-    return dto;
+    console.log(`Writing configuration file to ${workflowsCompileTimeFilePath}`);
+    const stringToWrite = JSON.stringify(dto, null, 4);
+    fs.writeFileSync(workflowsCompileTimeFilePath, stringToWrite);
+    return { message: `File written to ${workflowsCompileTimeFilePath}.  You need to recompile to use it.`};
 }
 
 export function getDefaultWorkflowId(): string {

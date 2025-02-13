@@ -11,7 +11,7 @@ workflowRouter.get('/', async (req: any, res: any) => {
   res.json(workflows);
 });
 
-workflowRouter.get('/config', async (req: any, res: any) => {
+workflowRouter.post('/save-config', async (req: any, res: any) => {
   // Access the 'objective' from the request body
   const result = exportToWorkflowJsonFormat();
   res.json(result);
