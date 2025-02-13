@@ -65,8 +65,12 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
   }
 
   const displayStepsBeingEdited = () => {
-    const elements = stepsBeingEdited.map(s => (<li><span>Editing step: </span><b>{s.description}</b></li>))
-    return (<ul>{elements}</ul>)
+    if (stepsBeingEdited.length === 0) {
+      return null;
+    }
+    
+    const stepDescriptions = stepsBeingEdited.map(s => s.description).join(",");
+    return (<span>&nbsp; &nbsp; Steps: {stepDescriptions}</span>)
   }
 
   const displayStep = (index:number, step:WorkflowStep) => {
@@ -109,11 +113,11 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
   return (
     
     <div className="workflow-edit-container">
-      <h1>
+      <h2>
         Editing {workflowId}
-      </h1>
+        { displayStepsBeingEdited() }
+      </h2>
       { displayButtons() }
-      { displayStepsBeingEdited() }
       <div className="workflow-edit-steps-container">
         <table>
           <tbody>

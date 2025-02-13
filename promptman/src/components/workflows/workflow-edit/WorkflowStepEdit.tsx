@@ -36,9 +36,8 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
 
     return (
       <div className="workflow-edit-step">
-        <h1>Step {indexNo + 1}</h1>
+        <h1>Step {indexNo + 1}&nbsp;<span className='step-description'>{step.description}</span></h1>
         <h2><button className='edit-step-btn' onClick={startEditing}>Edit Step</button></h2>
-        <h2>Description: {step.description}</h2>
         <h3>Stage: {step.stage}</h3>
         <textarea value={prompt} readOnly={true} />
       </div>

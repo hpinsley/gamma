@@ -8,7 +8,7 @@ body {
 }
 
 input {
-  width: 600px;
+  width: 300px;
   padding: 10px 15px; /* Add padding for better spacing */
   margin: 10px 0; /* Add margin for spacing */
   border: 1px solid #ccc; /* Light gray border */
@@ -265,8 +265,7 @@ div.variable-list button {
 }
 
 div.workflow-edit-steps-container {
-  border: 3px solid black;
-  padding: 30px;
+  padding: 3px;
 }
 
 div.workflow-edit-step div.step-index {
@@ -293,7 +292,7 @@ div.workflow-edit-step.editing select {
   padding: 10px; /* Padding for better spacing */
   color: #333333; /* Dark text color for readability */
   font-size: 16px; /* Font size for better legibility */
-  transition: border-color 0.3s ease; /* Smooth transition for focus effect */
+  transition: border-color 0.3s ease, background-color 0.3s ease; /* Smooth transition for focus effect */
   width: 100%; /* Full width to fill the parent */
   box-sizing: border-box; /* Include padding and border in the element's total width */
 }
@@ -301,10 +300,15 @@ div.workflow-edit-step.editing select {
 div.workflow-edit-step.editing input:focus, 
 div.workflow-edit-step.editing textarea:focus, 
 div.workflow-edit-step.editing select:focus {
-  border-color: #357ab8; /* Darker blue border on focus */
+  border-color: #28a745; /* Bright green border on focus */
+  background-color: #e8f5e9; /* Light green background on focus */
   outline: none; /* Remove default outline */
-  box-shadow: 0 0 5px rgba(53, 122, 184, 0.5); /* Subtle shadow on focus */
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.5); /* More pronounced shadow on focus */
 }
+
+div.workflow-edit-step.editing textarea {
+  height: 400px;
+} 
 
 div.workflow-edit-step.editing label {
   font-size: 16px; /* Font size for readability */
@@ -326,4 +330,8 @@ div.workflow-edit-step.editing div.prompt-entry {
 
 div.workflow-edit-step.editing label {
   flex: 3;
+}
+
+span.step-description {
+  color: #4a90e2; /* Soft blue background */
 }
