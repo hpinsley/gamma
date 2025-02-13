@@ -91,10 +91,10 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
     }
   };
 
-  const displayVariables = () => {
+  const displayVariables = (variablesDisabled:boolean) => {
     return (
       <div className='variable-list'>
-        {variables.map((v, i) => <TemplateVariable key={i} variable={v} onInsertVariable={v => insertTextAtCursor(v.revolve())} />)}
+        {variables.map((v, i) => <TemplateVariable disabled={variablesDisabled} key={i} variable={v} onInsertVariable={v => insertTextAtCursor(v.revolve())} />)}
       </div>
     );
   }
@@ -112,6 +112,20 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
     )
   }
 
+  const promptEntryDisplay = () => {
+    return (
+        <div className='prompt-entry'>
+        <label>Prompt Template
+        <textarea className='prompt-entry-textarea' ref={textareaRef} value={prompt} 
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onChange={ev => setPrompt(ev.target.value)} 
+        />
+        </label>
+        {displayVariables(false)}
+        </div>
+    );
+  }
   const editDisplay = () => {
     return (
       <div className="workflow-edit-step editing">
@@ -122,16 +136,7 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, onSt
           </label>
         </div>
         {editStage()}
-        <div className='prompt-entry'>
-          <label>Prompt Template
-          <textarea ref={textareaRef} value={prompt} 
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              onChange={ev => setPrompt(ev.target.value)} 
-          />
-          </label>
-          </div>
-        {isFocused && displayVariables()}
+        {promptEntryDisplay()}
         {displayEditDispositionButtons()}
       </div>
     );

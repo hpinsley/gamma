@@ -251,12 +251,16 @@ button {
   transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
 
+button:disabled {
+  background-color: #ccc;
+}
+
 div.variable-list {
-  width: 80vw;
-  margin-bottom: 2px;
+  border: 1px solid black;
 }
 
 div.variable-list button {
+  display:block;
   margin-bottom: 2px;
 }
 
@@ -295,6 +299,7 @@ div.workflow-edit-step.editing select {
 }
 
 div.workflow-edit-step.editing input:focus, 
+div.workflow-edit-step.editing textarea:focus, 
 div.workflow-edit-step.editing select:focus {
   border-color: #357ab8; /* Darker blue border on focus */
   outline: none; /* Remove default outline */
@@ -312,4 +317,13 @@ div.workflow-edit-step.editing label {
 
 div.workflow-edit-step.editing label:hover {
   color: #e0e0e0; /* Light gray on hover for subtle feedback */
+}
+
+div.workflow-edit-step.editing div.prompt-entry {
+  display: flex;
+  flex-direction: row;
+}
+
+div.workflow-edit-step.editing label {
+  flex: 3;
 }
