@@ -3,14 +3,14 @@ import { Workflow, Variable, WorkflowStage } from '../models/WorkflowModels';
 
 
 const variables:Variable[] = [
-      { display: "userObjective", description: "The user's objective", revolve: () => "${userObjective}" }
-    , { display: "qaJson", description: "The users answers", revolve: () => "${qaJson}" }
+      { display: "userObjective", description: "The user's objective", resolve: () => "${userObjective}" }
+    , { display: "qaJson", description: "The users answers", resolve: () => "${qaJson}" }
     , { display: "finalInstructions", description: "Suggested final instructions to build prompt", 
-      revolve: () => `With all this information, I'd like you to construct the perfect PROMPT for the user to copy and paste into gpt.
+      resolve: () => `With all this information, I'd like you to construct the perfect PROMPT for the user to copy and paste into gpt.
 Be sure to include somewhere in the prompt, "go back and forth with me until we have generated a response that helps me achieve my goal"
       ` }
     , { display: "initialTemplate", description: "The JSON format template to give the AI", 
-        revolve: () => `[
+        resolve: () => `[
   {
     "category": "Category Name",
     "questions": [

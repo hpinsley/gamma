@@ -106,7 +106,7 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step,
   const displayVariables = (variablesDisabled:boolean) => {
     return (
       <div className='variable-list'>
-        {variables.map((v, i) => <TemplateVariable disabled={variablesDisabled} key={i} variable={v} onInsertVariable={v => insertTextAtCursor(v.revolve())} />)}
+        {variables.map((v, i) => <TemplateVariable disabled={variablesDisabled} key={i} variable={v} onInsertVariable={v => insertTextAtCursor(v.resolve())} />)}
       </div>
     );
   }

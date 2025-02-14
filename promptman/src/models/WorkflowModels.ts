@@ -19,5 +19,5 @@ export interface Workflow {
 export interface Variable {
     display: string;
     description: string;
-    revolve: () => string;
+    resolve: () => string;
 }
