@@ -64,6 +64,10 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     setWorkflow(updatedWorkflow)
   }
 
+  const moveStep = (step:WorkflowStep, curIndex:number, direction: number) => {
+    console.log(`Moving step ${step.description} at index ${curIndex} amount: ${direction}`);
+  }
+
   const displayStepsBeingEdited = () => {
     if (stepsBeingEdited.length === 0) {
       return null;
@@ -80,6 +84,8 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
           <WorflowStepEdit key={index} indexNo={index} step={step} 
               onStepChange={(updatedStep:WorkflowStep) => updateWorkflowStep(index, updatedStep)} 
               onIsEditingChange={noteWorkflowStepIsEditingState}
+              onMoveStepUp={(step, index) => moveStep(step, index, -1)}
+              onMoveStepDown={(step, index) => moveStep(step, index, 1)}
               />
         </td>
       </tr>
