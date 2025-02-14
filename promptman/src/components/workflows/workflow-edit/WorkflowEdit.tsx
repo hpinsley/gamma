@@ -66,6 +66,27 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
 
   const moveStep = (step:WorkflowStep, curIndex:number, direction: number) => {
     console.log(`Moving step ${step.description} at index ${curIndex} amount: ${direction}`);
+
+    if (!workflow) {
+      console.error("No workflow is defined in updateWorkflowStep")
+      return;
+    }
+
+    let newIndex = curIndex + direction;
+    if (newIndex < 0 || newIndex >= workflow.steps.length) {
+      console.log("Cannot move in that direction");
+      return;
+    }
+
+    console.log("updating");
+    
+    // First remove the step from where it is and then insert it at the step
+    const updatedWorkflow:Workflow = {...workflow, 
+        steps: workflow.steps.filter((step, stepIndex) => (stepIndex !== curIndex))
+    }
+
+    updatedWorkflow.steps.splice(newIndex, 0, step);
+    setWorkflow(updatedWorkflow)
   }
 
   const displayStepsBeingEdited = () => {
