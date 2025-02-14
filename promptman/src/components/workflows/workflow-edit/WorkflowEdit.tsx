@@ -91,6 +91,11 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     }
 
     console.log(`Request to copy step ${step.description} at index ${index}`);
+    const newStep = {...step };
+
+    const updatedWorkflow:Workflow = {...workflow }
+    updatedWorkflow.steps.splice(index, 0, newStep);
+    setWorkflow(updatedWorkflow)
   }
 
   const moveStep = (step:WorkflowStep, curIndex:number, direction: number) => {

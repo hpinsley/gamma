@@ -93,10 +93,10 @@ const Workflows: React.FC<WorkflowsProps> = ({selectedWorkflowId}) => {
       </h1>
       <p>Default Workflow ID: <b>{defaultWorkflowId}</b></p>
       <hr/>
-      <p id="workflow-caveats">Select a workflow to view its definition.  <b>Note that you cannot change
-        or add a workflow definition here</b>.  If we want additional workflows, they have to be added
-        to data/workflow.json for now until we provision some sort of external persistence
-        layer.
+      <p id="workflow-caveats">Select a workflow to view its definition.  <b>If you change any workflow
+        definitions, it will save in server memory.  However, if the server restarts, it will revert to
+          JSON file.  There is a Save Config button if you want to overwrite that (which will need a server
+          recompile)</b>
       </p>
       { showDropdownList() }
       <hr/>
