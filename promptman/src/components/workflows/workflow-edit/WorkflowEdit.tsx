@@ -75,7 +75,14 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
       alert('You cannot delete the last step.  You always need at least one step.');
       return;
     }
+
+    const updatedWorkflow:Workflow = {...workflow, 
+      steps: workflow.steps.filter((step, stepIndex) => (stepIndex !== index))
   }
+
+  setWorkflow(updatedWorkflow)
+  console.log('Step removed');
+}
 
   const copyStep = (step:WorkflowStep, index:number) => {
     if (!workflow) {
