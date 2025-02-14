@@ -64,6 +64,28 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
     setWorkflow(updatedWorkflow)
   }
 
+  const deleteStep = (step:WorkflowStep, index:number) => {
+    if (!workflow) {
+      console.error("No workflow!");
+      return;
+    }
+
+    console.log(`Request to delete step ${step.description} at index ${index}`);
+    if (workflow.steps.length == 1) {
+      alert('You cannot delete the last step.  You always need at least one step.');
+      return;
+    }
+  }
+
+  const copyStep = (step:WorkflowStep, index:number) => {
+    if (!workflow) {
+      console.error("No workflow!");
+      return;
+    }
+
+    console.log(`Request to copy step ${step.description} at index ${index}`);
+  }
+
   const moveStep = (step:WorkflowStep, curIndex:number, direction: number) => {
     console.log(`Moving step ${step.description} at index ${curIndex} amount: ${direction}`);
 
@@ -107,6 +129,8 @@ const WorkflowEdit: React.FC<WorkflowEditProps> = ({ workflowId }) => {
               onIsEditingChange={noteWorkflowStepIsEditingState}
               onMoveStepUp={(step, index) => moveStep(step, index, -1)}
               onMoveStepDown={(step, index) => moveStep(step, index, 1)}
+              onCopyStep={copyStep}
+              onDeleteStep={deleteStep}
               />
         </td>
       </tr>

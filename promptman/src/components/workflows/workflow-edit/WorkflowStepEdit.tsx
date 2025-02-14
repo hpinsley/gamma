@@ -11,11 +11,14 @@ interface WorkflowStepEditProps {
   onIsEditingChange: (workflowStep: WorkflowStep, isEditing: boolean) => void;
   onMoveStepUp: (workflowStep:WorkflowStep, indexNo:number) => void;
   onMoveStepDown: (workflowStep:WorkflowStep, indexNo:number) => void;
+  onCopyStep: (workflowStep:WorkflowStep, indexNo:number) => void;
+  onDeleteStep: (workflowStep:WorkflowStep, indexNo:number) => void;
 }
 
 const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step, 
                                                              onStepChange, onIsEditingChange,
-                                                            onMoveStepUp, onMoveStepDown }) => {
+                                                            onMoveStepUp, onMoveStepDown,
+                                                            onCopyStep, onDeleteStep }) => {
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [description, setDescription] = useState<string>(step.description);
@@ -45,6 +48,8 @@ const WorkflowStepEdit: React.FC<WorkflowStepEditProps> = ({ indexNo, step,
             <button className='edit-step-btn' onClick={startEditing}>Edit Step</button>
             <button className='move-step-up-btn' onClick={() => onMoveStepUp(step, indexNo)}>Move Step Up</button>
             <button className='move-step-down-btn' onClick={() => onMoveStepDown(step, indexNo)}>Move Step Down</button>
+            <button className='copy-step-down-btn' onClick={() => onCopyStep(step, indexNo)}>Copy Step</button>
+            <button className='delete-step-down-btn' onClick={() => onDeleteStep(step, indexNo)}>Delete Step</button>
           </h2>
         <h3>Stage: {step.stage}</h3>
         <textarea value={prompt} readOnly={true} />
