@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { addWorkflowAsync, getDefaultWorkflowIdAsync, getAllWorkflowsAsync, setDefaultWorkflowIdAsync } from '../../services/workflow_service';
+import { saveConfigAsyncAsync, addWorkflowAsync, getDefaultWorkflowIdAsync, getAllWorkflowsAsync, setDefaultWorkflowIdAsync } from '../../services/workflow_service';
 import { Workflow } from '../../models/WorkflowModels';
 import WorkflowDisplay from './workflow-display/WorkflowDisplay';
 import { useNavigate } from 'react-router-dom';
@@ -63,6 +63,11 @@ const Workflows: React.FC<WorkflowsProps> = ({selectedWorkflowId}) => {
     navigate(route);
   }
 
+  const saveConfig = () => {
+    saveConfigAsyncAsync()
+      .then(saveMessage => alert(saveMessage.message));
+  }
+
   const duplicateWorkflow = async (sourceWorkflow: Workflow) : Promise<void> => {
     const sourceWorkflowId =sourceWorkflow.id;
     const newId = prompt(`Copy workflow ${sourceWorkflowId} to what new id?`);
@@ -82,7 +87,10 @@ const Workflows: React.FC<WorkflowsProps> = ({selectedWorkflowId}) => {
 
   return (
     <div id="workflows-container">
-      <h1>Workflows</h1>
+      <h1>Workflows
+        &nbsp;
+        <button id='save-workflow-config-btn' onClick={saveConfig}>Save Config</button>
+      </h1>
       <p>Default Workflow ID: <b>{defaultWorkflowId}</b></p>
       <hr/>
       <p id="workflow-caveats">Select a workflow to view its definition.  <b>Note that you cannot change

@@ -76,6 +76,14 @@ export const setDefaultWorkflowIdAsync = async (workflowId: string): Promise<voi
     console.log("setDefaultWorkflow response", response.status);
 }
 
+export const saveConfigAsyncAsync = async (): Promise<any> => {
+  const url = `${PROMPTMAN_SERVICE_URL}/workflows/save-config`;
+  const response = await fetch(url, { method: 'POST' });
+  console.log("setDefaultWorkflow response", response.status);
+  const model = await response.json();
+  return model;
+}
+
 export const addWorkflowAsync = async (workflow: Workflow): Promise<Workflow> => {
 
     const bodyString = JSON.stringify(workflow);
