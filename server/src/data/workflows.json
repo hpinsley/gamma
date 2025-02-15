@@ -78,7 +78,7 @@
                         "Here are questions you asked me and the answers I provided in json format:",
                         "${qaJson}",
                         "",
-                        "Are there any ADDITIONAL follow up questions you'd like me to answer to clarify or refine the answers I've given you.  Please reply with your new questions in this JSON format:",
+                        "Please ask ADDITIONAL follow up questions you'd like me to answer to clarify or refine the answers I've given you.  Please reply with your new questions in this JSON format:",
                         "",
                         "[",
                         "  {",
@@ -91,7 +91,7 @@
                         "  }",
                         "]",
                         "",
-                        "If you have no further follow up questions, just return an empty JSON array.  Do not reply with any extra text."
+                        "Please reply in this JSON format with no extra text."
                     ]
                 }
             ]
