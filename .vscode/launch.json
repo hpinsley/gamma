@@ -14,6 +14,17 @@
       "skipFiles": [
         "<node_internals>/**"
       ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch CLIENT for debugging",
+      "cwd": "${workspaceFolder}/promptman",
+      "program": "${workspaceFolder}/promptman/scripts/start.js", // Adjust to your compiled entry file
+      "sourceMaps": true, // Enable source maps for debugging TypeScript
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
     }
   ]
 }
