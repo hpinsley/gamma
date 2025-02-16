@@ -43,7 +43,7 @@ promptManRouter.post('/process-step', async (req: express.Request<{}, ExecuteSte
     console.log(`Next step ${nextWorkflowStep} is stage ${nextWorkflowStep.stage} - ${nextWorkflowStep.description}`);
   }
 
-  const prompt = generateStagePrompt(userObjective, currentQA, workflow, workflowStep);
+  const prompt = generateStagePrompt(userObjective, currentQA, priorQA, workflow, workflowStep);
   const client = Utils.getOpenAIClient();
 
   try {
@@ -95,7 +95,7 @@ promptManRouter.post('/process-step', async (req: express.Request<{}, ExecuteSte
   }
 });
 
-const generateStagePrompt = (objective: string, qa: CategoryQuestionsAndAnswers[], workflow: Workflow, step: WorkflowStep): string => {
+const generateStagePrompt = (objective: string, qa: CategoryQuestionsAndAnswers[], priorQA: CategoryQuestionsAndAnswers[], workflow: Workflow, step: WorkflowStep): string => {
 
   const templateString = step.prompt;
   // console.log(`Template string is ${templateString}`);
@@ -104,6 +104,11 @@ const generateStagePrompt = (objective: string, qa: CategoryQuestionsAndAnswers[
   if (qa.length > 0) {
     const qaJson = JSON.stringify(qa, null, 2);
     prompt = prompt.replace('${qaJson}', qaJson);
+  }
+
+  if (priorQA.length > 0) {
+    const priorQAJson = JSON.stringify(priorQA, null, 2);
+    prompt = prompt.replace('${priorQaJson}', priorQAJson);
   }
 
   return prompt;
