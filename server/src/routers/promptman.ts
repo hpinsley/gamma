@@ -12,7 +12,8 @@ promptManRouter.post('/process-step', async (req: express.Request<{}, ExecuteSte
   const request = req.body;
 
   const userObjective = request.userObjective;
-  const qa = request.qa ? request.qa : []
+  const currentQA = request.currentQA ? request.currentQA : []
+  const priorQA = request.priorQA ? request.priorQA : []
 
   const workflow = getDefaultWorkflow();
   if (!workflow) {
@@ -42,7 +43,7 @@ promptManRouter.post('/process-step', async (req: express.Request<{}, ExecuteSte
     console.log(`Next step ${nextWorkflowStep} is stage ${nextWorkflowStep.stage} - ${nextWorkflowStep.description}`);
   }
 
-  const prompt = generateStagePrompt(userObjective, qa, workflow, workflowStep);
+  const prompt = generateStagePrompt(userObjective, currentQA, workflow, workflowStep);
   const client = Utils.getOpenAIClient();
 
   try {

@@ -1,11 +1,12 @@
 import { ExecuteStepRequest, ExecuteStepResponse, CategoryQuestionsAndAnswers, ProcessUserAnswersRequestBody, Options } from '../models/PromptModels';
 import { PROMPTMAN_SERVICE_URL } from '../config';
 
-export const executeStepAsync = async (userObjective: string, categoryQuestionsAndAnswers: CategoryQuestionsAndAnswers[], options:Options, stepIndex:number): Promise<ExecuteStepResponse> => {
+export const executeStepAsync = async (userObjective: string, categoryQuestionsAndAnswers: CategoryQuestionsAndAnswers[], priorQA: CategoryQuestionsAndAnswers[], options:Options, stepIndex:number): Promise<ExecuteStepResponse> => {
     const payload:ExecuteStepRequest = {
         userObjective: userObjective,
         stepToExecute: stepIndex,
-        qa: categoryQuestionsAndAnswers,
+        currentQA: categoryQuestionsAndAnswers,
+        priorQA: priorQA,
         options: options
     }
 

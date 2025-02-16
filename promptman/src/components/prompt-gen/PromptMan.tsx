@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import { ExecuteStepResponse, CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, Options } from '../../models/PromptModels';
+import { CategoryQuestionsAndAnswers, QuestionAndAnswer, Options } from '../../models/PromptModels';
 import { executeStepAsync} from '../../services/promptman_service';
 import { WorkflowStage } from '../../models/WorkflowModels';
 import { mapCategoryQuestions } from '../../common/utils';
@@ -28,15 +28,16 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   // const [initialQuestion, setinitialQuestion] = React.useState('How can I be my best self?');
   const [userObjective, setUserObjective] = React.useState('How can I become an interior designer?');
   const [workflowStage, setWorkflowStage] = React.useState<WorkflowStage>(WorkflowStage.INITIAL);
-  const [nextStepIndex, setNextStepIndex] = React.useState<number|undefined>(undefined);
+  const [nextStepIndex, setNextStepIndex] = React.useState<number>(0);
   const [categoryQuestionsAndAnswers, setCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
+  const [priorCategoryQuestionsAndAnswers, setPriorCategoryQuestionsAndAnswers] = React.useState<CategoryQuestionsAndAnswers[]>([]);
   const [detailedPlan, setDetailedPlan] = React.useState('');
   const [fetchState, setFetchState] = React.useState<FetchState>(FetchState.NotStarted);
   const [promptState, setPromptState] = React.useState<PromptState>(PromptState.NeedInitialQuestion);
   const [errorMsg, setErrorMsg] = React.useState('');
 
   const setAnswer = (qa: QuestionAndAnswer, answer: string) => {
-  const newCategoryQuestionsAndAnswers = categoryQuestionsAndAnswers.map((category) => {
+      const newCategoryQuestionsAndAnswers = categoryQuestionsAndAnswers.map((category) => {
       return {
         category: category.category,
         questionsAndAnswers: category.questionsAndAnswers.map((questionAndAnswer) => {
@@ -92,7 +93,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
         </ul>
         <div>
           <div>
-            {currentAnswerCount() > 0 && promptState !== PromptState.FetchingResponse && (<button id="submit-answers" onClick={submitUserAnswers}>Submit Answers</button>)}
+            {currentAnswerCount() > 0 && promptState !== PromptState.FetchingResponse && (<button id="submit-answers" onClick={sendStateToServer}>Submit Answers</button>)}
           </div>
         </div>
       </div>);
@@ -128,52 +129,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     );
   };
 
-  const processUserObjective = async () => {
-
-    setCategoryQuestionsAndAnswers([]);
-    setPromptState(PromptState.FetchingResponse);
-    setFetchState(FetchState.Loading);
-    setErrorMsg('');
-
-    try {
-      await talkToServer(userObjective);
-      setFetchState(FetchState.Loaded);
-      setPromptState(PromptState.NeedUserAnswers);
-    }
-    catch (error) {
-      console.error(error);
-      setFetchState(FetchState.Error);
-      if (error instanceof Error) {
-        setErrorMsg(error.message);
-      } else {
-        setErrorMsg('An unknown error occurred');
-      }
-    }
-  };
-
-  const talkToServer = async (userObjective: string) => {
-
-    const options:Options = {
-      removeEmptyQuestions: true
-    }
-    const responseData = await executeStepAsync(userObjective, [], options, 0);
-
-    console.log(responseData);
-
-    setWorkflowStage(responseData.stage);
-    setNextStepIndex(responseData.nextStepIndex)
-    
-    if (!responseData.categoryQuesions) {
-      throw new Error('No questions returned from server');
-    }
-
-    // Convert the response data to the format we need to include our answers
-    const qa: CategoryQuestionsAndAnswers[] = responseData.categoryQuesions.map(mapCategoryQuestions);
-    
-    setCategoryQuestionsAndAnswers(qa);
-  };
-
-  const submitUserAnswers = async (): Promise<void> => {
+  const sendStateToServer = async (): Promise<void> => {
     try {
 
       setPromptState(PromptState.FetchingResponse);
@@ -188,7 +144,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
         throw new Error('Next step index is undefined');
       }
 
-      const response = await executeStepAsync(userObjective, categoryQuestionsAndAnswers, options, nextStepIndex);
+      const response = await executeStepAsync(userObjective, categoryQuestionsAndAnswers, priorCategoryQuestionsAndAnswers, options, nextStepIndex);
       setFetchState(FetchState.Loaded);
       setWorkflowStage(response.stage);
       setNextStepIndex(response.nextStepIndex);
@@ -211,6 +167,8 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
         throw new Error('No questions returned from server');
       }
         const qa: CategoryQuestionsAndAnswers[] = response.categoryQuesions.map(mapCategoryQuestions);
+        mergeCurrentQandAIntoPrior();
+        setPriorCategoryQuestionsAndAnswers([...categoryQuestionsAndAnswers]);
         setCategoryQuestionsAndAnswers(qa);
         setPromptState(PromptState.NeedUserAnswers);
       }
@@ -226,12 +184,40 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     }
   }
 
+  const mergeCurrentQandAIntoPrior = () => {
+    const currentQandA = categoryQuestionsAndAnswers;
+    const priorQandA = priorCategoryQuestionsAndAnswers;
+  
+    const mergedQandA = [...priorQandA];
+  
+    currentQandA.forEach(currentCategory => {
+      const priorCategory = mergedQandA.find(category => category.category === currentCategory.category);
+  
+      if (priorCategory) {
+        currentCategory.questionsAndAnswers.forEach(currentQA => {
+          const priorQA = priorCategory.questionsAndAnswers.find(qa => qa.question === currentQA.question);
+  
+          if (priorQA) {
+            priorQA.answer = currentQA.answer;
+          } else {
+            priorCategory.questionsAndAnswers.push(currentQA);
+          }
+        });
+      } else {
+        mergedQandA.push(currentCategory);
+      }
+    });
+  
+    setPriorCategoryQuestionsAndAnswers(mergedQandA);
+  }
+
   const restart = () => {
     setUserObjective('');
     setCategoryQuestionsAndAnswers([]);
+    setPriorCategoryQuestionsAndAnswers([]);
     setDetailedPlan('');
     setWorkflowStage(WorkflowStage.INITIAL);
-    setNextStepIndex(undefined)
+    setNextStepIndex(0)
     setFetchState(FetchState.NotStarted);
     setPromptState(PromptState.NeedInitialQuestion);
     setErrorMsg('');
@@ -268,7 +254,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
           <input
             value={userObjective}
             onChange={(e) => setUserObjective(e.target.value)} />
-          <button id="ask" onClick={processUserObjective}>Ask</button>
+          <button id="ask" onClick={sendStateToServer}>Ask</button>
         </div>
       </div>
     );

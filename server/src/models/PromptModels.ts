@@ -32,14 +32,15 @@ export interface InitialPromptRequest {
 export interface ExecuteStepRequest {
     userObjective: string; // or the appropriate type
     stepToExecute: number;
-    qa?: CategoryQuestionsAndAnswers[];
+    priorQA?: CategoryQuestionsAndAnswers[];
+    currentQA?: CategoryQuestionsAndAnswers[];
     options?: Options | undefined;
 }
 
 export interface ExecuteStepResponse {
     userObjective: string;
     stage: WorkflowStage;
-    nextStepIndex?: number;
+    nextStepIndex: number;
     categoryQuesions?: CategoryQuestions[]
     finalPrompt?: string;     
 }
