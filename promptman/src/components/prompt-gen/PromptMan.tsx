@@ -2,7 +2,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import { ExecuteStepResponse, CategoryQuestions, CategoryQuestionsAndAnswers, QuestionAndAnswer, Options } from '../../models/PromptModels';
-import {getServerQAndAFromUserObjectiveAsync, submitUserAnswersAsync} from '../../services/promptman_service';
+import { executeStepAsync} from '../../services/promptman_service';
 import { WorkflowStage } from '../../models/WorkflowModels';
 import { mapCategoryQuestions } from '../../common/utils';
 
@@ -154,7 +154,10 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
   const getServerQAndAFromUserObjective = async (userObjective: string) => {
 
-    const responseData = await getServerQAndAFromUserObjectiveAsync(userObjective);
+    const options:Options = {
+      removeEmptyQuestions: true
+    }
+    const responseData = await executeStepAsync(userObjective, [], options, 0);
 
     console.log(responseData);
 
@@ -186,7 +189,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
         throw new Error('Next step index is undefined');
       }
 
-      const response = await submitUserAnswersAsync(userObjective, categoryQuestionsAndAnswers, options, nextStepIndex);
+      const response = await executeStepAsync(userObjective, categoryQuestionsAndAnswers, options, nextStepIndex);
       setFetchState(FetchState.Loaded);
       setWorkflowStage(response.stage);
       setNextStepIndex(response.nextStepIndex);
@@ -202,6 +205,9 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
             onDetailPlanGenerated(userObjective, response.finalPrompt);
           }
         }
+      }
+      else {
+        setPromptState(PromptState.NeedUserAnswers);
       }
     }
     catch (error) {

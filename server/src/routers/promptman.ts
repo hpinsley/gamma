@@ -46,14 +46,17 @@ promptManRouter.post('/process-step', async (req: express.Request<{}, ExecuteSte
   const client = Utils.getOpenAIClient();
 
   try {
+    console.log(`Sending: ${prompt}`);
+
     const aiResponse = await client.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'gpt-4o',
     });
 
     let responseText = aiResponse.choices[0].message.content || "";
-
-    console.log('Initial prompt response before cleaning:', responseText);
+    console.log(`Received ${responseText}`);
+    
+    // console.log('Initial prompt response before cleaning:', responseText);
 
     // Clean up the response text to remove any extraneous formatting
     responseText = responseText
@@ -94,7 +97,7 @@ promptManRouter.post('/process-step', async (req: express.Request<{}, ExecuteSte
 const generateStagePrompt = (objective: string, qa: CategoryQuestionsAndAnswers[], workflow: Workflow, step: WorkflowStep): string => {
 
   const templateString = step.prompt;
-  console.log(`Template string is ${templateString}`);
+  // console.log(`Template string is ${templateString}`);
 
   let prompt = templateString.replace('${userObjective}', objective);
   if (qa.length > 0) {
