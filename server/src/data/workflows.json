@@ -78,7 +78,9 @@
                         "Here are questions you asked me and the answers I provided in json format:",
                         "${qaJson}",
                         "",
-                        "Please ask ADDITIONAL follow up questions you'd like me to answer to clarify or refine the answers I've given you.  Please reply with your new questions in this JSON format:",
+                        "Please ask ADDITIONAL follow up questions you'd like me to answer to clarify or refine the answers I've given you.  Please don't repeat any of the questions you've already asked me, above but feel free to dive more deeply with follow-up questions.",
+                        "",
+                        "Please reply with your new questions in this JSON format:",
                         "",
                         "[",
                         "  {",
@@ -109,7 +111,7 @@
                         "",
                         "With all this information, I'd like you to construct the perfect text PROMPT for the user to copy and paste into chatGTP.",
                         "",
-                        "Be sure to include somewhere in the prompt, \"go back and forth with me until we have generated a response that helps me achieve my goal\".  Also delineate the prompt text with PROMPT-START and PROMPT-END."
+                        "Be sure to include somewhere in the prompt, \"go back and forth with me until we have generated a response that helps me achieve my goal.\".  Also delineate the prompt text with line breaks and these text delimiters.  PROMPT-START and PROMPT-END."
                     ]
                 }
             ]
