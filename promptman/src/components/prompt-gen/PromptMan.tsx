@@ -12,9 +12,8 @@ interface PromptManProps {
 
 enum PromptState {
   NeedInitialQuestion,
-  FetchingInitialResponse,
   NeedUserAnswers,
-  FetchingSecondaryResponse,
+  FetchingResponse,
   DisplayingFinalResults
 }
 
@@ -39,12 +38,12 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   const processUserObjective = async () => {
 
     setCategoryQuestionsAndAnswers([]);
-    setPromptState(PromptState.FetchingInitialResponse);
+    setPromptState(PromptState.FetchingResponse);
     setFetchState(FetchState.Loading);
     setErrorMsg('');
 
     try {
-      await getServerQAndAFromUserObjective(userObjective);
+      await talkToServer(userObjective);
       setFetchState(FetchState.Loaded);
       setPromptState(PromptState.NeedUserAnswers);
     }
@@ -87,7 +86,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   }
 
   const displayCurrentAnswers = () => {
-    if (promptState !== PromptState.NeedUserAnswers && promptState !== PromptState.FetchingSecondaryResponse) {
+    if (promptState !== PromptState.NeedUserAnswers && promptState !== PromptState.FetchingResponse) {
       return null;
     }
 
@@ -116,7 +115,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
         </ul>
         <div>
           <div>
-            {currentAnswerCount() > 0 && promptState !== PromptState.FetchingSecondaryResponse && (<button id="submit-answers" onClick={submitUserAnswers}>Submit Answers</button>)}
+            {currentAnswerCount() > 0 && promptState !== PromptState.FetchingResponse && (<button id="submit-answers" onClick={submitUserAnswers}>Submit Answers</button>)}
           </div>
         </div>
       </div>);
@@ -152,7 +151,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     );
   };
 
-  const getServerQAndAFromUserObjective = async (userObjective: string) => {
+  const talkToServer = async (userObjective: string) => {
 
     const options:Options = {
       removeEmptyQuestions: true
@@ -177,7 +176,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   const submitUserAnswers = async (): Promise<void> => {
     try {
 
-      setPromptState(PromptState.FetchingSecondaryResponse);
+      setPromptState(PromptState.FetchingResponse);
       setFetchState(FetchState.Loading);
       setErrorMsg('');
 
@@ -308,7 +307,7 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
 
   const renderQuestionsAndAnswers = () => {
     if (promptState === PromptState.NeedInitialQuestion ||
-      promptState === PromptState.FetchingInitialResponse ||
+      promptState === PromptState.FetchingResponse ||
       promptState === PromptState.DisplayingFinalResults) {
       return null;
     }
