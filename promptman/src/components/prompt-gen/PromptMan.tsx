@@ -35,31 +35,8 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
   const [promptState, setPromptState] = React.useState<PromptState>(PromptState.NeedInitialQuestion);
   const [errorMsg, setErrorMsg] = React.useState('');
 
-  const processUserObjective = async () => {
-
-    setCategoryQuestionsAndAnswers([]);
-    setPromptState(PromptState.FetchingResponse);
-    setFetchState(FetchState.Loading);
-    setErrorMsg('');
-
-    try {
-      await talkToServer(userObjective);
-      setFetchState(FetchState.Loaded);
-      setPromptState(PromptState.NeedUserAnswers);
-    }
-    catch (error) {
-      console.error(error);
-      setFetchState(FetchState.Error);
-      if (error instanceof Error) {
-        setErrorMsg(error.message);
-      } else {
-        setErrorMsg('An unknown error occurred');
-      }
-    }
-  };
-
   const setAnswer = (qa: QuestionAndAnswer, answer: string) => {
-    const newCategoryQuestionsAndAnswers = categoryQuestionsAndAnswers.map((category) => {
+  const newCategoryQuestionsAndAnswers = categoryQuestionsAndAnswers.map((category) => {
       return {
         category: category.category,
         questionsAndAnswers: category.questionsAndAnswers.map((questionAndAnswer) => {
@@ -151,6 +128,29 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
     );
   };
 
+  const processUserObjective = async () => {
+
+    setCategoryQuestionsAndAnswers([]);
+    setPromptState(PromptState.FetchingResponse);
+    setFetchState(FetchState.Loading);
+    setErrorMsg('');
+
+    try {
+      await talkToServer(userObjective);
+      setFetchState(FetchState.Loaded);
+      setPromptState(PromptState.NeedUserAnswers);
+    }
+    catch (error) {
+      console.error(error);
+      setFetchState(FetchState.Error);
+      if (error instanceof Error) {
+        setErrorMsg(error.message);
+      } else {
+        setErrorMsg('An unknown error occurred');
+      }
+    }
+  };
+
   const talkToServer = async (userObjective: string) => {
 
     const options:Options = {
@@ -206,6 +206,12 @@ const PromptMan: React.FC<PromptManProps> = ({ onDetailPlanGenerated }) => {
         }
       }
       else {
+      // Convert the response data to the format we need to include our answers
+      if (!response.categoryQuesions) {
+        throw new Error('No questions returned from server');
+      }
+        const qa: CategoryQuestionsAndAnswers[] = response.categoryQuesions.map(mapCategoryQuestions);
+        setCategoryQuestionsAndAnswers(qa);
         setPromptState(PromptState.NeedUserAnswers);
       }
     }
